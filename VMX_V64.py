@@ -91,10 +91,10 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
         self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
         self._session.set_select_buttons(self._note_map[SCENEDN], self._note_map[SCENEUP])
-        # range(tsb_x) is the horizontal count for the track selection box
-        self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in range(TSB_X)]
-        # range(tsb_y) Range value is the track selection
-        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in range(TSB_Y)]
+        # range(tsb_x) Range value is the track selection
+        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]
+        # range(tsb_y) is the horizontal count for the track selection box
+        self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in range(TSB_Y)]
         self._session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
         self._session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
         self._session.selected_scene().name = 'Selected_Scene'

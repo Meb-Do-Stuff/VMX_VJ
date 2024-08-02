@@ -14,7 +14,7 @@ SCENE_OFFSET = 0  # offset from the top of linked session origin (no auto-join)
 # Duplicate assignments are permitted
 
 BUTTONCHANNEL = 0  # Channel assignment for all mapped buttons/pads; valid range is 0 to 15 ; 0=1, 1=2 etc.
-MESSAGETYPE = 0  # Message type for buttons/pads; set to 0 for MIDI Notes, 1 for CCs.
+MESSAGETYPE = 1  # Message type for buttons/pads; set to 0 for MIDI Notes, 1 for CCs.
 # When using CCs for buttons/pads, set BUTTONCHANNEL and SLIDERCHANNEL to different values.
 
 
@@ -62,10 +62,10 @@ SEEKFWD = -1  # Seek forward
 SEEKRWD = -1  # Seek rewind
 
 # Session Navigation (aka "red box")
-SESSIONLEFT = -1  # Session left
-SESSIONRIGHT = -1  # Session right
-SESSIONUP = -1  # Session up
-SESSIONDOWN = -1  # Session down
+SESSIONLEFT = 67  # Session left
+SESSIONRIGHT = 68  # Session right
+SESSIONUP = 65  # Session up
+SESSIONDOWN = 66  # Session down
 ZOOMUP = -1  # Session Zoom up
 ZOOMDOWN = -1  # Session Zoom down
 ZOOMLEFT = -1  # Session Zoom left
@@ -93,10 +93,10 @@ STOPALLCLIPS = -1  # Stop all clips
 
 # 8x8 Matrix note assignments
 # Track no.:     1   2   3   4   5   6   7   8   9   10   11   12   13   14   15   16
-CLIPNOTEMAP = ((-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),  # Row 1
-               (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),  # Row 2
-               (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),  # Row 3
-               (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),  # Row 4
+CLIPNOTEMAP = ((1, 2, 3, 4, 17, 18, 19, 20, 33, 34, 35, 36, 49, 50, 51, 52),  # Row 1
+               (5, 6, 7, 8, 21, 22, 23, 24, 37, 38, 39, 40, 53, 54, 55, 56),  # Row 2
+               (9, 10, 11, 12, 25, 26, 27, 28, 41, 42, 43, 44, 57, 58, 59, 60),  # Row 3
+               (13, 14, 15, 16, 29, 30, 31, 32, 45, 46, 47, 48, 61, 62, 63, 64),  # Row 4
                )
 
 # Track Control
