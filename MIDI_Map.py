@@ -207,7 +207,7 @@ DRUM_PADS = (-1, -1, -1, -1,  # MIDI note numbers for 4 x 4 Drum Rack
 # ---------------
 # Valid CC assignments are 0 to 127, or -1 for NONE
 # Duplicate assignments will be ignored
-SLIDERCHANNEL = 0  # Channel assignment for all mapped CCs; valid range is 0 to 15
+SLIDERCHANNEL = 2  # Channel assignment for all mapped CCs; valid range is 0 to 15
 TEMPO_TOP = 180.0  # Upper limit of tempo control in BPM (max is 999)
 TEMPO_BOTTOM = 100.0  # Lower limit of tempo control in BPM (min is 0)
 
@@ -216,10 +216,10 @@ MASTERVOLUME = -1  # Master track volume
 CUELEVEL = -1  # Cue level control
 CROSSFADER = -1  # Crossfader control
 
-TRACKVOL = (-1,  # Track 1 Volume
-            -1,  # Track 2
-            -1,  # Track 3
-            -1,  # Track 4
+TRACKVOL = (118,  # Track 1 Volume
+            119,  # Track 2
+            120,  # Track 3
+            121,  # Track 4
             -1,  # Track 5
             -1,  # Track 6
             -1,  # Track 7
@@ -228,10 +228,10 @@ TRACKVOL = (-1,  # Track 1 Volume
             -1,  # Track 10
             -1,  # Track 11
             -1,  # Track 12
-            -1,  # Track 13
-            -1,  # Track 14
-            -1,  # Track 15
-            -1,  # Track 16
+            113,  # Track 13
+            114,  # Track 14
+            115,  # Track 15
+            116,  # Track 16
             )
 
 TRACKPAN = (-1,  # Track 1 Pan
@@ -252,40 +252,40 @@ TRACKPAN = (-1,  # Track 1 Pan
             -1,  # Track 16
             )
 
-TRACKSENDA = (-1,  # Track 1 Send A
-              -1,  # Track 2
-              -1,  # Track 3
-              -1,  # Track 4
-              -1,  # Track 5
-              -1,  # Track 6
-              -1,  # Track 7
-              -1,  # Track 8
-              -1,  # Track 9
-              -1,  # Track 10
-              -1,  # Track 11
-              -1,  # Track 12
-              -1,  # Track 13
-              -1,  # Track 14
-              -1,  # Track 15
-              -1,  # Track 16
+TRACKSENDA = (81,  # Track 1 Send A
+              83,  # Track 2
+              85,  # Track 3
+              87,  # Track 4
+              89,  # Track 5
+              91,  # Track 6
+              93,  # Track 7
+              95,  # Track 8
+              97,  # Track 9
+              99,  # Track 10
+              101,  # Track 11
+              103,  # Track 12
+              105,  # Track 13
+              107,  # Track 14
+              109,  # Track 15
+              111,  # Track 16
               )
 
-TRACKSENDB = (-1,  # Track 1 Send B
-              -1,  # Track 2
-              -1,  # Track 3
-              -1,  # Track 4
-              -1,  # Track 5
-              -1,  # Track 6
-              -1,  # Track 7
-              -1,  # Track 8
-              -1,  # Track 9
-              -1,  # Track 10
-              -1,  # Track 11
-              -1,  # Track 12
-              -1,  # Track 13
-              -1,  # Track 14
-              -1,  # Track 15
-              -1,  # Track 16
+TRACKSENDB = (82,  # Track 1 Send B
+              84,  # Track 2
+              86,  # Track 3
+              88,  # Track 4
+              90,  # Track 5
+              92,  # Track 6
+              94,  # Track 7
+              96,  # Track 8
+              98,  # Track 9
+              100,  # Track 10
+              102,  # Track 11
+              104,  # Track 12
+              106,  # Track 13
+              108,  # Track 14
+              110,  # Track 15
+              112,  # Track 16
               )
 
 TRACKSENDC = (-1,  # Track 1 Send C
