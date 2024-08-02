@@ -146,7 +146,6 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             strip.set_invert_mute_feedback(True)
 
     def _setup_device_and_transport_control(self):
-        is_momentary = True
         self._device = DeviceComponent()
         self._device.name = 'Device_Component'
         device_bank_buttons = []
@@ -207,8 +206,11 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             self.set_pad_translations(tuple(self._pads))
 
     def _load_MIDI_map(self):
-        is_momentary = True
         for note in range(128):
+            if note <= 64:
+                is_momentary = False
+            else:
+                is_momentary = True
             button = ButtonElement(is_momentary, MESSAGETYPE, BUTTONCHANNEL, note)
             button.name = 'Note_' + str(note)
             self._note_map.append(button)
