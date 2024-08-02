@@ -37,6 +37,9 @@ There is a software to directly modify settings with the firmware, but this soft
 
 ## Step 2: MIDI Mapping
 
+First thing to do is the re-adapt this script that was made for an 8x8 controller, to my 16x4.<br>
+There are matrix of -1, and I'm quite sure that the wrong amount of -1 would generate an error.
+It's now time to find buttons and everything.
 
 ---
 
