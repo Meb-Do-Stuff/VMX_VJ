@@ -43,6 +43,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             self._note_map = []
             self._ctrl_map = []
             self._load_MIDI_map()
+            self._jog_wheel = None
             self._session = None
             self._session_zoom = None
             self._mixer = None
@@ -65,12 +66,13 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session = None
         self._session_zoom = None
         self._mixer = None
+        self._jog_wheel = None
         ControlSurface.disconnect(self)
 
     def _do_combine(self):
-        if self not in VMX_V64._active_instances:    # Make sure you update the name
-            VMX_V64._active_instances.append(self)   # Make sure you update the name
-            VMX_V64._combine_active_instances()  # Make sure you update the name
+        if self not in VMX_V64._active_instances:
+            VMX_V64._active_instances.append(self)
+            VMX_V64._combine_active_instances()
 
     def _do_uncombine(self):
         if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(self):    # Make sure you update the name
@@ -85,7 +87,6 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_session_control(self):
-        is_momentary = True
         self._session = SpecialSessionComponent(TSB_X, TSB_Y)   # Track selection box size (X,Y) (horizontal, vertical).
         self._session.name = 'Session_Control'
         self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
@@ -117,8 +118,6 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT], self._note_map[ZOOMRIGHT])
 
     def _setup_mixer_control(self):
-
-        is_momentary = True
         self._mixer = SpecialMixerComponent(8)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
@@ -184,7 +183,8 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         transport.set_loop_button(self._note_map[LOOP])
         transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
         transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
-        # transport.set_song_position_control(self._ctrl_map[SONGPOSITION]) #still not implemented as of Live 8.1.6
+
+        transport.set_time(self._jog_wheel)
 
     def _on_selected_track_changed(self):
         ControlSurface._on_selected_track_changed(self)
@@ -224,3 +224,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
                 control.name = 'Ctrl_' + str(ctrl)
                 self._ctrl_map.append(control)
             self._ctrl_map.append(None)
+
+        self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 0, 125)
+        # jog0 = SliderElement(MIDI_CC_TYPE, 0, 125)
+        self._jog_wheel.name = 'Jog_Wheel0'

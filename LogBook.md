@@ -44,8 +44,12 @@ It's now time to find buttons and everything.
 <img src="https://raw.githubusercontent.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/main/Map.png" height="500">
 Outputing is really weird, I'll try again later.
 
+I managed to set that the 16x4 buttons can launch clip, and the 16x2 knobs can managed the Send A & B, and faders manage volume.
+Working on the jog can manage the time, but it's quite hard.
+
 ---
 
 Moral support:<br>
 [Max Cooper's Boiler Room](https://soundcloud.com/platform/max-cooper?si=8238550d7a3144bcaceca196e514521c&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
-[David August's Boiler Room](https://soundcloud.com/platform/david-august?si=6f764d61632349fcb5e680b10d23418d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)
+[David August's Boiler Room](https://soundcloud.com/platform/david-august?si=6f764d61632349fcb5e680b10d23418d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
+[David August's Innervisions #50 LIVE Podcast](https://soundcloud.com/davidaugust/innervisions-50-live-podcast?si=6fd98977e3b647429ca6c9d1a45be392&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
