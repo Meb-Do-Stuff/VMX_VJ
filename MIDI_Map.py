@@ -306,7 +306,7 @@ TRACKSENDC = (-1,  # Track 1 Send C
               -1,  # Track 16
               )
 
-PARAMCONTROL = (-1,  # Param 1 #All 8 params must be assigned to positive values in order for param control to work
+PARAMCONTROL = (-1,  # Param 1 #All ? params must be assigned to positive values in order for param control to work
                 -1,  # Param 2
                 -1,  # Param 3
                 -1,  # Param 4
