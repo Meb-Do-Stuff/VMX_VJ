@@ -1,7 +1,3 @@
-# Avoid using tabs for indentation, use spaces.
-# Don't use floats, they might break things.
-
-
 # Combination Mode offsets
 # ------------------------
 
@@ -315,3 +311,12 @@ PARAMCONTROL = (-1,  # Param 1 #All ? params must be assigned to positive values
                 -1,  # Param 7
                 -1,  # Param 8
                 )
+
+# Custom Menu
+# ----------
+MENUBUTTONS = [
+    65, 66, 73, 74,
+    67, 68, 75, 76,
+    69, 70, 77, 78,
+    71, 72, 79, 80
+]

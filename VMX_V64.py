@@ -15,6 +15,7 @@ from .SpecialTransportComponent import SpecialTransportComponent
 from .SpecialSessionComponent import SpecialSessionComponent
 from .SpecialZoomingComponent import SpecialZoomingComponent
 from .SpecialViewControllerComponent import DetailViewControllerComponent
+from .SpecialMenuSystem import SpecialMenuSystem
 from .MIDI_Map import *
 
 
@@ -42,8 +43,10 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         with self.component_guard():
             self._note_map = []
             self._ctrl_map = []
+            self._menu_map = []
             self._load_MIDI_map()
             self._jog_wheel = None
+            self._load_jog_wheel()
             self._session = None
             self._session_zoom = None
             self._mixer = None
@@ -53,6 +56,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             self._setup_device_and_transport_control()
             self.set_highlighting_session_component(self._session)
             # self.set_suppress_rebuild_requests(False)
+            SpecialMenuSystem(self._note_map)
         self._pads = []
         self._load_pad_translations()
         self._do_combine()
@@ -183,7 +187,6 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         transport.set_loop_button(self._note_map[LOOP])
         transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
         transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
-
         transport.set_time(self._jog_wheel)
 
     def _on_selected_track_changed(self):
@@ -214,6 +217,8 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             button = ButtonElement(is_momentary, MESSAGETYPE, BUTTONCHANNEL, note)
             button.name = 'Note_' + str(note)
             self._note_map.append(button)
+            if note in MENUBUTTONS:
+                self._menu_map.append(button)
         self._note_map.append(None)     # add None to the end of the list, selectable with [-1]
         if MESSAGETYPE == MIDI_CC_TYPE and BUTTONCHANNEL == SLIDERCHANNEL:
             for ctrl in range(128):
@@ -225,6 +230,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
                 self._ctrl_map.append(control)
             self._ctrl_map.append(None)
 
+    def _load_jog_wheel(self):
         self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 0, 125)
-        # jog0 = SliderElement(MIDI_CC_TYPE, 0, 125)
-        self._jog_wheel.name = 'Jog_Wheel0'
+        self._jog_wheel.name = 'Jog_Wheel'
+

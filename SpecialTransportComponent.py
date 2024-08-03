@@ -29,7 +29,6 @@ class SpecialTransportComponent(TransportComponent):
         #self._bts_button = None #added from OpenLabs SpecialTransportComponent script
         self._tempo_encoder_control = None  #new addition
         self._time_button = None
-        return None
 
     def disconnect(self):
         TransportComponent.disconnect(self)
@@ -52,6 +51,9 @@ class SpecialTransportComponent(TransportComponent):
         if (self._tempo_encoder_control != None):  #new addition
             self._tempo_encoder_control.remove_value_listener(self._tempo_encoder_value)
             self._tempo_encoder_control = None
+        if self._time_button is not None:
+            self._time_button.remove_value_listener(self._time_value)
+            self._time_button = None
         return None
 
     #def set_shift_button(self, button):
@@ -69,35 +71,40 @@ class SpecialTransportComponent(TransportComponent):
     #return None
 
     def set_quant_toggle_button(self, button):
-        if not (button == None or isinstance(button, ButtonElement) and button.is_momentary()):
+        if not (button is None or isinstance(button, ButtonElement) and button.is_momentary()):
             isinstance(button, ButtonElement)
             raise AssertionError
         if self._quant_toggle_button != button:
-            if self._quant_toggle_button != None:
+            if self._quant_toggle_button is not None:
                 self._quant_toggle_button.remove_value_listener(self._quant_toggle_value)
             self._quant_toggle_button = button
-            if self._quant_toggle_button != None:
+            if self._quant_toggle_button is not None:
                 self._quant_toggle_button.add_value_listener(self._quant_toggle_value)
 
             self.update()
-        return None
 
     def set_time(self, button):
+        """
+        Hook jog to time control
+        """
         if self._time_button != button:
             if self._time_button is not None:
                 self._time_button.remove_value_listener(self._time_value)
             self._time_button = button
             if self._time_button is not None:
                 self._time_button.add_value_listener(self._time_value)
-
             self.update()
-        return None
 
     def _time_value(self, value):
+        """
+        Function to move the current song time, 0 is left, else it's right
+        """
         assert (self._time_button is not None)
         if self.is_enabled():
             if value == 0:
                 self._move_current_song_time(-1, 1)
+            else:
+                self._move_current_song_time(1, 1)
 
     #def update(self):
     #self._on_metronome_changed()

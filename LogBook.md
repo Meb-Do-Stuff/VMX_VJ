@@ -16,7 +16,7 @@ Surface controls are Python scripts, that are used by Ableton to turn random Mid
 [Ableton 12 other surface controls](https://github.com/gluon/AbletonLive12_MIDIRemoteScripts)<br>
 [Live module functions](https://structure-void.com/PythonLiveAPI_documentation/Live11.0.xml)<br>
 [_framework module documentation](https://structure-void.com/AbletonLiveRemoteScripts_Docs/_Framework/)<br>
-[Manuel of the VMX V64](https://www.manualslib.com/manual/2817471/Codanova-Vmx-V-64.html)
+[Manuel for the VMX V64](https://www.manualslib.com/manual/2817471/Codanova-Vmx-V-64.html)
 
 To start with, I'll use [Laidlaw42's Custom MIDI Remote Script repo](https://github.com/laidlaw42/ableton-live-midi-remote-scripts) as a base.
 
@@ -53,3 +53,4 @@ Moral support:<br>
 [Max Cooper's Boiler Room](https://soundcloud.com/platform/max-cooper?si=8238550d7a3144bcaceca196e514521c&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
 [David August's Boiler Room](https://soundcloud.com/platform/david-august?si=6f764d61632349fcb5e680b10d23418d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
 [David August's Innervisions #50 LIVE Podcast](https://soundcloud.com/davidaugust/innervisions-50-live-podcast?si=6fd98977e3b647429ca6c9d1a45be392&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
+[Rimarkable's Boiler Room](https://youtu.be/hoyCaeT_tuo)<br>
