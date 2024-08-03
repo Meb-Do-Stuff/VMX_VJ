@@ -220,14 +220,6 @@ TRACKVOL = (118,  # Track 1 Volume
             114,  # Track 6
             115,  # Track 7
             116,  # Track 8
-            -1,  # Track 9
-            -1,  # Track 10
-            -1,  # Track 11
-            -1,  # Track 12
-            -1,  # Track 13
-            -1,  # Track 14
-            -1,  # Track 15
-            -1,  # Track 16
             )
 
 TRACKPAN = (-1,  # Track 1 Pan

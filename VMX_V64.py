@@ -23,15 +23,15 @@ from .MIDI_Map import *
 # MIDI_PB_TYPE = 2
 
 
-class VMX_V64(ControlSurface):  # Make sure you update the name
-    __doc__ = " Script for VMX V64 with correct dip switch "  # Make sure you update the name
+class VMX_V64(ControlSurface):
+    __doc__ = " Script for VMX V64 with correct dip switch "
 
     _active_instances = []
 
     def _combine_active_instances():
         track_offset = 0
         scene_offset = 0
-        for instance in VMX_V64._active_instances:  # Make sure you update the name
+        for instance in VMX_V64._active_instances:
             instance._activate_combination_mode(track_offset, scene_offset)
             track_offset += instance._session.width()
 
@@ -50,8 +50,8 @@ class VMX_V64(ControlSurface):  # Make sure you update the name
             self._session = None
             self._session_zoom = None
             self._mixer = None
-            self._setup_session_control()
             self._setup_mixer_control()
+            self._setup_session_control()
             self._session.set_mixer(self._mixer)
             self._setup_device_and_transport_control()
             self.set_highlighting_session_component(self._session)
@@ -78,10 +78,9 @@ class VMX_V64(ControlSurface):  # Make sure you update the name
             VMX_V64._combine_active_instances()
 
     def _do_uncombine(self):
-        if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(
-                self):  # Make sure you update the name
+        if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(self):
             self._session.unlink()
-            VMX_V64._combine_active_instances()  # Make sure you update the name
+            VMX_V64._combine_active_instances()
 
     def _activate_combination_mode(self, track_offset, scene_offset):
         if TRACK_OFFSET != -1:
@@ -90,9 +89,25 @@ class VMX_V64(ControlSurface):  # Make sure you update the name
             scene_offset = SCENE_OFFSET
         self._session.link_with_track_offset(track_offset, scene_offset)
 
+    def _setup_mixer_control(self):
+        self._mixer = SpecialMixerComponent(TSB_X)
+        self._mixer.name = 'Mixer'
+        self._mixer.master_strip().name = 'Master_Channel_Strip'
+        self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
+        self._mixer.selected_strip().name = 'Selected_Channel_Strip'
+        self._mixer.set_select_buttons(self._note_map[TRACKRIGHT], self._note_map[TRACKLEFT])
+        self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER])
+        self._mixer.set_prehear_volume_control(self._ctrl_map[CUELEVEL])
+        self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
+        self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
+        self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
+        self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
+        self._mixer.volumes_faders = [self._ctrl_map[TRACKVOL[index]] for index in range(int(TSB_X / 2))]  # range(tsb_x) (because only 8 faders over 16 tracks)
+        self._mixer.send_a = [self._ctrl_map[TRACKSENDA[index]] for index in range(TSB_X)]
+        self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
+
     def _setup_session_control(self):
-        self._session = SpecialSessionComponent(TSB_X, TSB_Y,
-                                                self._menu_map)  # Track selection box size (X,Y) (horizontal, vertical).
+        self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer)  # Track selection box size (X,Y) (horizontal, vertical).
         self._session.name = 'Session_Control'
         self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
         self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
@@ -112,39 +127,13 @@ class VMX_V64(ControlSurface):  # Make sure you update the name
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
                 button_row.append(button)
             self._session.clip_launch_buttons.append(button_row)
+            self._mixer.clip_launch_buttons.append(button_row)
         self._session.setup_clip_launch()
         self._session_zoom = SpecialZoomingComponent(self._session)
         self._session_zoom.name = 'Session_Overview'
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
                                            self._note_map[ZOOMRIGHT])
-
-    def _setup_mixer_control(self):
-        self._mixer = SpecialMixerComponent(TSB_X)
-        self._mixer.name = 'Mixer'
-        self._mixer.master_strip().name = 'Master_Channel_Strip'
-        self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
-        self._mixer.selected_strip().name = 'Selected_Channel_Strip'
-        self._mixer.set_select_buttons(self._note_map[TRACKRIGHT], self._note_map[TRACKLEFT])
-        self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER])
-        self._mixer.set_prehear_volume_control(self._ctrl_map[CUELEVEL])
-        self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
-        self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
-        self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
-        self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
-        for track in range(TSB_X):
-            # My guess is that altering the range here will allow you to alter the range of mixer tracks
-            # So if you had a 16 fader mixer, this would come in handy.
-            strip = self._mixer.channel_strip(track)
-            strip.name = 'Channel_Strip_' + str(track)
-            strip.set_arm_button(self._note_map[TRACKREC[track]])
-            strip.set_solo_button(self._note_map[TRACKSOLO[track]])
-            strip.set_mute_button(self._note_map[TRACKMUTE[track]])
-            strip.set_select_button(self._note_map[TRACKSEL[track]])
-            strip.set_volume_control(self._ctrl_map[TRACKVOL[track]])
-            strip.set_pan_control(self._ctrl_map[TRACKPAN[track]])
-            strip.set_send_controls((self._ctrl_map[TRACKSENDA[track]], self._ctrl_map[TRACKSENDB[track]],
-                                     self._ctrl_map[TRACKSENDC[track]]))
-            strip.set_invert_mute_feedback(True)
+        self._mixer.unbind_alt()
 
     def _setup_device_and_transport_control(self):
         self._device = DeviceComponent()
