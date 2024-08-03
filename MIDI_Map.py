@@ -57,7 +57,7 @@ DEVICEBANK = (-1,  # Bank 1
 SEEKFWD = -1  # Seek forward
 SEEKRWD = -1  # Seek rewind
 
-# Session Navigation (aka "red box")
+# Session Navigation
 SESSIONLEFT = 67  # Session left
 SESSIONRIGHT = 68  # Session right
 SESSIONUP = 65  # Session up
@@ -66,14 +66,6 @@ ZOOMUP = -1  # Session Zoom up
 ZOOMDOWN = -1  # Session Zoom down
 ZOOMLEFT = -1  # Session Zoom left
 ZOOMRIGHT = -1  # Session Zoom right
-
-# Track Navigation
-TRACKLEFT = -1  # Track left
-TRACKRIGHT = -1  # Track right
-
-# Scene Navigation
-SCENEUP = -1  # Scene down
-SCENEDN = -1  # Scene up
 
 # Scene Launch
 SELSCENELAUNCH = -1  # Selected scene launch
@@ -84,8 +76,8 @@ SCENELAUNCH = (-1,  # Scene 1 Launch
                )
 
 # Clip Launch / Stop
-SELCLIPLAUNCH = -1  # Selected clip launch
-STOPALLCLIPS = -1  # Stop all clips
+SELCLIPLAUNCH = 70  # Selected clip launch
+STOPALLCLIPS = 80  # Stop all clips
 
 # 8x8 Matrix note assignments
 # Track no.:     1   2   3   4   5   6   7   8   9   10   11   12   13   14   15   16

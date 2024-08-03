@@ -8,7 +8,7 @@ from math import sqrt
 
 
 class SpecialSessionComponent(SessionComponent):
-    """ Special SessionComponent for VMX V64 combination mode and button to fire selected clip slot, as well as a menu system """
+    """ Special SessionComponent for VMX V64 combination mode and button to fire selected clip slot, as well as an alt system """
     __module__ = __name__
 
     def __init__(self, num_tracks, num_scenes, buttons, mixer):
@@ -16,14 +16,18 @@ class SpecialSessionComponent(SessionComponent):
         self.num_scenes = num_scenes
         self.num_tracks = num_tracks
         self._slot_launch_button = None
-        self._igniter = buttons[int(sqrt(len(buttons))) * -1]
+        self._alt0_igniter = buttons[int(sqrt(len(buttons))) * -1]
+        self._alt1_igniter = buttons[int(sqrt(len(buttons))) * -1 + 1]
         # self._igniter.is_momentary = False
         self._buttons = buttons
         self._mixer = mixer
-        Live.Base.log(self._igniter.name)
         self.clip_launch_buttons = []
         self._setup_igniter()
         self._last_known_listener = []
+        self.session_right = None
+        self.session_left = None
+        self.session_up = None
+        self.session_down = None
 
     def setup_clip_launch(self):
         for scene_index in range(self.num_scenes):
@@ -50,6 +54,7 @@ class SpecialSessionComponent(SessionComponent):
         SessionComponent.disconnect(self)
         if self._slot_launch_button is not None:
             self._slot_launch_button.remove_value_listener(self._slot_launch_value)
+
             self._slot_launch_button = None
 
     def link_with_track_offset(self, track_offset, scene_offset):
@@ -83,16 +88,41 @@ class SpecialSessionComponent(SessionComponent):
                     self.song().view.highlighted_clip_slot.fire()
 
     def _setup_igniter(self):
-        assert (self._igniter is not None)
-        self._igniter.add_value_listener(self._engage_menu)
+        assert (self._alt0_igniter is not None)
+        self._alt0_igniter.add_value_listener(self._engage_alt)
+        assert (self._alt1_igniter is not None)
+        self._alt1_igniter.add_value_listener(self._engage_sceneLaunch)
         self.update()
 
-    def _engage_menu(self, value):
-        if value == 127:
-            Live.Base.log("Menu open!")
+    def view_setup(self):
+        self.set_track_bank_buttons(self.session_right, self.session_left)
+        self.set_scene_bank_buttons(self.session_down, self.session_up)
+        self.set_select_buttons(None, None)
+
+    def _engage_sceneLaunch(self, value):
+        if value == 127:  # Menu open
+            self.unbind_clip_launch()
+            for scene_index in range(self.num_scenes):
+                scene = self.scene(scene_index)
+                scene.name = 'Scene_' + str(scene_index)
+                button = self.clip_launch_buttons[scene_index][-1]
+                button.is_momentary = False
+                scene.set_launch_button(button)
+                scene.set_triggered_value(2)
+        elif value == 0:
+            for scene_index in range(self.num_scenes):
+                scene = self.scene(scene_index)
+                scene.set_launch_button(None)
+            self.setup_clip_launch()
+
+    def _engage_alt(self, value):
+        if value == 127:  # Alt enabled
+            self.set_track_bank_buttons(None, None)
+            self.set_scene_bank_buttons(None, None)
+            self.set_select_buttons(self.session_down, self.session_up)
             self.unbind_clip_launch()
             self._mixer.alt_binding()
-        elif value == 0:
-            Live.Base.log("Menu closed!")
+        elif value == 0:  # Alt disabled
+            self.view_setup()
             self.setup_clip_launch()
             self._mixer.unbind_alt()

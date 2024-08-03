@@ -90,12 +90,11 @@ class VMX_V64(ControlSurface):
         self._session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_mixer_control(self):
-        self._mixer = SpecialMixerComponent(TSB_X)
+        self._mixer = SpecialMixerComponent(TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT])
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
         self._mixer.selected_strip().name = 'Selected_Channel_Strip'
-        self._mixer.set_select_buttons(self._note_map[TRACKRIGHT], self._note_map[TRACKLEFT])
         self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER])
         self._mixer.set_prehear_volume_control(self._ctrl_map[CUELEVEL])
         self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
@@ -109,9 +108,11 @@ class VMX_V64(ControlSurface):
     def _setup_session_control(self):
         self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer)  # Track selection box size (X,Y) (horizontal, vertical).
         self._session.name = 'Session_Control'
-        self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
-        self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
-        self._session.set_select_buttons(self._note_map[SCENEDN], self._note_map[SCENEUP])
+        self._session.session_down = self._note_map[SESSIONDOWN]
+        self._session.session_up = self._note_map[SESSIONUP]
+        self._session.session_left = self._note_map[SESSIONLEFT]
+        self._session.session_right = self._note_map[SESSIONRIGHT]
+        self._session.view_setup()
         # range(tsb_x) Range value is the track selection
         self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]
         # range(tsb_y) is the horizontal count for the track selection box

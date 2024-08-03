@@ -6,7 +6,10 @@
 import Live
 from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
 from _Framework.ButtonElement import ButtonElement
+
 SHOW_PLAYING_CLIP_DELAY = 5
+
+
 class DetailViewControllerComponent(ControlSurfaceComponent):
     __module__ = __name__
     __doc__ = ' Component that can toggle the device chain- and clip view of the selected track '
@@ -40,12 +43,12 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
             self._right_button.remove_value_listener(self._nav_value)
             self._right_button = None
         #if self._shift_button != None:
-            #self._shift_button.remove_value_listener(self._shift_value)
-            #self._shift_button = None
+        #self._shift_button.remove_value_listener(self._shift_value)
+        #self._shift_button = None
         return None
 
     def set_device_clip_toggle_button(self, button):
-        if not(button == None or isinstance(button, ButtonElement)):
+        if not (button == None or isinstance(button, ButtonElement)):
             isinstance(button, ButtonElement)
             raise AssertionError
         if self._device_clip_toggle_button != button:
@@ -59,7 +62,7 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
         return None
 
     def set_detail_toggle_button(self, button):
-        if not(button == None or isinstance(button, ButtonElement)):
+        if not (button == None or isinstance(button, ButtonElement)):
             isinstance(button, ButtonElement)
             raise AssertionError
         if self._detail_toggle_button != button:
@@ -73,40 +76,40 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
         return None
 
     def set_device_nav_buttons(self, left_button, right_button):
-        if not(left_button == None or isinstance(left_button, ButtonElement)):
+        if not (left_button == None or isinstance(left_button, ButtonElement)):
             isinstance(left_button, ButtonElement)
             raise AssertionError
-        if not(right_button == None or isinstance(right_button, ButtonElement)):
+        if not (right_button is None or isinstance(right_button, ButtonElement)):
             isinstance(right_button, ButtonElement)
             raise AssertionError
         identify_sender = True
-        if self._left_button != None:
+        if self._left_button is not None:
             self._left_button.remove_value_listener(self._nav_value)
         self._left_button = left_button
-        if self._left_button != None:
+        if self._left_button is not None:
             self._left_button.add_value_listener(self._nav_value, identify_sender)
-        if self._right_button != None:
+        if self._right_button is not None:
             self._right_button.remove_value_listener(self._nav_value)
         self._right_button = right_button
-        if self._right_button != None:
+        if self._right_button is not None:
             self._right_button.add_value_listener(self._nav_value, identify_sender)
 
         self.update()
         return None
 
     #def set_shift_button(self, button):
-        #if not(button == None or isinstance(button, ButtonElement) and button.is_momentary()):
-            #isinstance(button, ButtonElement)
-            #raise AssertionError
-        #if self._shift_button != button:
-            #if self._shift_button != None:
-                #self._shift_button.remove_value_listener(self._shift_value)
-            #self._shift_button = button
-            #if self._shift_button != None:
-                #self._shift_button.add_value_listener(self._shift_value)
-            #
-            #self.update()
-        #return None
+    #if not(button == None or isinstance(button, ButtonElement) and button.is_momentary()):
+    #isinstance(button, ButtonElement)
+    #raise AssertionError
+    #if self._shift_button != button:
+    #if self._shift_button != None:
+    #self._shift_button.remove_value_listener(self._shift_value)
+    #self._shift_button = button
+    #if self._shift_button != None:
+    #self._shift_button.add_value_listener(self._shift_value)
+    #
+    #self.update()
+    #return None
 
     def on_enabled_changed(self):
         self.update()
@@ -114,24 +117,24 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
     def update(self):
         pass
         #if self.is_enabled():
-            #self.is_enabled()
-            #if not self._shift_pressed:
-                #self._shift_pressed
-                #if self._left_button != None:
-                    #self._left_button.turn_off()
-                #if self._right_button != None:
-                    #self._right_button.turn_off()
-                #if self._device_clip_toggle_button != None:
-                    #self._device_clip_toggle_button.turn_off()
-                #self._detail_view_visibility_changed()
-            #else:
-                #self._shift_pressed
+        #self.is_enabled()
+        #if not self._shift_pressed:
+        #self._shift_pressed
+        #if self._left_button != None:
+        #self._left_button.turn_off()
+        #if self._right_button != None:
+        #self._right_button.turn_off()
+        #if self._device_clip_toggle_button != None:
+        #self._device_clip_toggle_button.turn_off()
+        #self._detail_view_visibility_changed()
         #else:
-            #self.is_enabled()
+        #self._shift_pressed
+        #else:
+        #self.is_enabled()
         return None
 
     def _detail_view_visibility_changed(self):
-        if self.is_enabled() and self._detail_toggle_button != None: #not self._shift_pressed and self._detail_toggle_button != None:
+        if self.is_enabled() and self._detail_toggle_button != None:  #not self._shift_pressed and self._detail_toggle_button != None:
             if self.application().view.is_view_visible('Detail'):
                 self.application().view.is_view_visible('Detail')
                 self._detail_toggle_button.turn_on()
@@ -147,7 +150,7 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
             raise AssertionError
         if not value in range(128):
             raise AssertionError
-        if self.is_enabled(): #and not self._shift_pressed:
+        if self.is_enabled():  #and not self._shift_pressed:
             button_is_momentary = self._device_clip_toggle_button.is_momentary()
             if not button_is_momentary or value != 0:
                 not button_is_momentary
@@ -171,34 +174,33 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
             self.is_enabled()
         return None
 
-
     def _detail_toggle_value(self, value):
         assert (self._detail_toggle_button != None)
         assert (value in range(128))
-        if self.is_enabled(): # and (not self._shift_pressed):
+        if self.is_enabled():  # and (not self._shift_pressed):
             if ((not self._detail_toggle_button.is_momentary()) or (value != 0)):
                 if (not self.application().view.is_view_visible('Detail')):
                     self.application().view.show_view('Detail')
                 else:
                     self.application().view.hide_view('Detail')
 
-
     #def _shift_value(self, value):
-        #if not self._shift_button != None:
-            #raise AssertionError
-        #if not value in range(128):
-            #raise AssertionError
-        #self._shift_pressed = value != 0
-        #self.update()
-        #return None
+    #if not self._shift_button != None:
+    #raise AssertionError
+    #if not value in range(128):
+    #raise AssertionError
+    #self._shift_pressed = value != 0
+    #self.update()
+    #return None
 
     def _nav_value(self, value, sender):
         assert ((sender != None) and (sender in (self._left_button,
                                                  self._right_button)))
-        if self.is_enabled(): # and (not self._shift_pressed):
+        if self.is_enabled():  # and (not self._shift_pressed):
             if ((not sender.is_momentary()) or (value != 0)):
                 modifier_pressed = True
-                if ((not self.application().view.is_view_visible('Detail')) or (not self.application().view.is_view_visible('Detail/DeviceChain'))):
+                if ((not self.application().view.is_view_visible('Detail')) or (
+                not self.application().view.is_view_visible('Detail/DeviceChain'))):
                     self.application().view.show_view('Detail')
                     self.application().view.show_view('Detail/DeviceChain')
                 else:
@@ -208,7 +210,7 @@ class DetailViewControllerComponent(ControlSurfaceComponent):
                     self.application().view.scroll_view(direction, 'Detail/DeviceChain', (not modifier_pressed))
 
     def _on_timer(self):
-        if self.is_enabled(): # and (not self._shift_pressed):
+        if self.is_enabled():  # and (not self._shift_pressed):
             if (self._show_playing_clip_ticks_delay > -1):
                 if (self._show_playing_clip_ticks_delay == 0):
                     song = self.song()
