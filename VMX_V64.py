@@ -23,17 +23,18 @@ from .MIDI_Map import *
 # MIDI_PB_TYPE = 2
 
 
-class VMX_V64(ControlSurface):   # Make sure you update the name
-    __doc__ = " Script for VMX V64 with correct dip switch "   # Make sure you update the name
+class VMX_V64(ControlSurface):  # Make sure you update the name
+    __doc__ = " Script for VMX V64 with correct dip switch "  # Make sure you update the name
 
     _active_instances = []
 
     def _combine_active_instances():
         track_offset = 0
         scene_offset = 0
-        for instance in VMX_V64._active_instances:   # Make sure you update the name
+        for instance in VMX_V64._active_instances:  # Make sure you update the name
             instance._activate_combination_mode(track_offset, scene_offset)
             track_offset += instance._session.width()
+
     _combine_active_instances = staticmethod(_combine_active_instances)
 
     def __init__(self, c_instance):
@@ -77,7 +78,8 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             VMX_V64._combine_active_instances()
 
     def _do_uncombine(self):
-        if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(self):    # Make sure you update the name
+        if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(
+                self):  # Make sure you update the name
             self._session.unlink()
             VMX_V64._combine_active_instances()  # Make sure you update the name
 
@@ -89,7 +91,8 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_session_control(self):
-        self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map)   # Track selection box size (X,Y) (horizontal, vertical).
+        self._session = SpecialSessionComponent(TSB_X, TSB_Y,
+                                                self._menu_map)  # Track selection box size (X,Y) (horizontal, vertical).
         self._session.name = 'Session_Control'
         self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
         self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
@@ -103,24 +106,20 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session.selected_scene().name = 'Selected_Scene'
         self._session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self._session.set_slot_launch_button(self._note_map[SELCLIPLAUNCH])
-        for scene_index in range(TSB_Y):    # Change range() value to set the vertical count for track selection box
-            scene = self._session.scene(scene_index)
-            scene.name = 'Scene_' + str(scene_index)
+        for scene_index in range(TSB_Y):
             button_row = []
-            scene.set_launch_button(self._scene_launch_buttons[scene_index])
-            scene.set_triggered_value(2)
-            for track_index in range(TSB_X):    # Change range() value to set the horizontal count for track selection box
+            for track_index in range(TSB_X):
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
                 button_row.append(button)
-                clip_slot = scene.clip_slot(track_index)
-                clip_slot.name = str(track_index) + '_Clip_Slot_' + str(scene_index)
-                clip_slot.set_launch_button(button)
+            self._session.clip_launch_buttons.append(button_row)
+        self._session.setup_clip_launch()
         self._session_zoom = SpecialZoomingComponent(self._session)
         self._session_zoom.name = 'Session_Overview'
-        self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT], self._note_map[ZOOMRIGHT])
+        self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
+                                           self._note_map[ZOOMRIGHT])
 
     def _setup_mixer_control(self):
-        self._mixer = SpecialMixerComponent(8)
+        self._mixer = SpecialMixerComponent(TSB_X)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
@@ -132,7 +131,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
         self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
         self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
-        for track in range(8):
+        for track in range(TSB_X):
             # My guess is that altering the range here will allow you to alter the range of mixer tracks
             # So if you had a 16 fader mixer, this would come in handy.
             strip = self._mixer.channel_strip(track)
@@ -143,7 +142,8 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             strip.set_select_button(self._note_map[TRACKSEL[track]])
             strip.set_volume_control(self._ctrl_map[TRACKVOL[track]])
             strip.set_pan_control(self._ctrl_map[TRACKPAN[track]])
-            strip.set_send_controls((self._ctrl_map[TRACKSENDA[track]], self._ctrl_map[TRACKSENDB[track]], self._ctrl_map[TRACKSENDC[track]]))
+            strip.set_send_controls((self._ctrl_map[TRACKSENDA[track]], self._ctrl_map[TRACKSENDB[track]],
+                                     self._ctrl_map[TRACKSENDC[track]]))
             strip.set_invert_mute_feedback(True)
 
     def _setup_device_and_transport_control(self):
@@ -202,7 +202,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             pad = []
             for row in range(4):
                 for col in range(4):
-                    pad = (col, row, DRUM_PADS[row*4 + col], PADCHANNEL,)
+                    pad = (col, row, DRUM_PADS[row * 4 + col], PADCHANNEL,)
                     self._pads.append(pad)
             self.set_pad_translations(tuple(self._pads))
 
@@ -215,9 +215,8 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             button = ButtonElement(is_momentary, MESSAGETYPE, BUTTONCHANNEL, note)
             button.name = 'Note_' + str(note)
             self._note_map.append(button)
-            if note in MENUBUTTONS:
-                self._menu_map.append(button)
-        self._note_map.append(None)     # add None to the end of the list, selectable with [-1]
+
+        self._note_map.append(None)  # add None to the end of the list, selectable with [-1]
         if MESSAGETYPE == MIDI_CC_TYPE and BUTTONCHANNEL == SLIDERCHANNEL:
             for ctrl in range(128):
                 self._ctrl_map.append(None)
@@ -228,7 +227,9 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
                 self._ctrl_map.append(control)
             self._ctrl_map.append(None)
 
+        for note in MENUBUTTONS:
+            self._menu_map.append(self._note_map[note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
+
     def _load_jog_wheel(self):
         self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 0, 125)
         self._jog_wheel.name = 'Jog_Wheel'
-

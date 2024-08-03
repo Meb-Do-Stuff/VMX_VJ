@@ -46,6 +46,9 @@ It's now time to find buttons and everything.
 
 I managed to set that the 16x4 buttons can launch clip, and the 16x2 knobs can managed the Send A & B, and faders manage volume.<br>
 The jog can now manage time.<br>
+
+## Step 3: Advanced MIDI
+
 Working on a menu system so you can do anything with it.
 
 ---

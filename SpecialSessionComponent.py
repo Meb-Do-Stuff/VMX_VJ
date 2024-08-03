@@ -13,25 +13,30 @@ class SpecialSessionComponent(SessionComponent):
 
     def __init__(self, num_tracks, num_scenes, buttons):
         SessionComponent.__init__(self, num_tracks, num_scenes)
+        self.num_scenes = num_scenes
+        self.num_tracks = num_tracks
         self._slot_launch_button = None
-        # buttons[int(sqrt(len(buttons))) * -1]
-        # ---|
-        # ---|
-        # ---|
-        # ---|
-        # int(sqrt(len(buttons)))
-        # buttons[]
-        # -|-|
-        # -|-|
-        # -|-|
-        # -|-|
-        self._igniter = buttons[int(sqrt(len(buttons))) * -1]  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
-
+        self._igniter = buttons[int(sqrt(len(buttons))) * -1]
+        # self._igniter.is_momentary = False
         self._buttons = buttons
         Live.Base.log(self._igniter.name)
+        self.clip_launch_buttons = []
         self._setup_igniter()
         self._last_known_listener = []
-        Live.Base.log(str(len(self._buttons)))
+
+    def setup_clip_launch(self):
+        for scene_index in range(self.num_scenes):
+            scene = self.scene(scene_index)
+            scene.name = 'Scene_' + str(scene_index)
+            button_row = []
+            scene.set_launch_button(self._scene_launch_buttons[scene_index])
+            scene.set_triggered_value(2)
+            for track_index in range(self.num_tracks):
+                button = self.clip_launch_buttons[scene_index][track_index]
+                button_row.append(button)
+                clip_slot = scene.clip_slot(track_index)
+                clip_slot.name = str(track_index) + '_Clip_Slot_' + str(scene_index)
+                clip_slot.set_launch_button(button)
 
     def disconnect(self):
         SessionComponent.disconnect(self)
@@ -77,7 +82,10 @@ class SpecialSessionComponent(SessionComponent):
 
     def _engage_menu(self, value):
         if value == 127:
-            Live.Base.log("Menu open!")
+            for button in self.row_button:
+                button
+        elif value == 0:
+            Live.Base.log("Menu closed!")
 
 # local variables:
 # tab-width: 4
