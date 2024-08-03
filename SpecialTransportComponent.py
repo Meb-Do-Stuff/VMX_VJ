@@ -35,20 +35,20 @@ class SpecialTransportComponent(TransportComponent):
         #if self._shift_button != None:
         #self._shift_button.remove_value_listener(self._shift_value)
         #self._shift_button = None
-        if self._quant_toggle_button != None:
+        if self._quant_toggle_button is not None:
             self._quant_toggle_button.remove_value_listener(self._quant_toggle_value)
             self._quant_toggle_button = None
         self.song().remove_midi_recording_quantization_listener(self._on_quantisation_changed)
-        if (self._undo_button != None):  #added from OpenLabs SpecialTransportComponent script
+        if self._undo_button is not None:  #added from OpenLabs SpecialTransportComponent script
             self._undo_button.remove_value_listener(self._undo_value)
             self._undo_button = None
-        if (self._redo_button != None):  #added from OpenLabs SpecialTransportComponent script
+        if self._redo_button is not None:  #added from OpenLabs SpecialTransportComponent script
             self._redo_button.remove_value_listener(self._redo_value)
             self._redo_button = None
         #if (self._bts_button != None): #added from OpenLabs SpecialTransportComponent script
         #self._bts_button.remove_value_listener(self._bts_value)
         #self._bts_button = None
-        if (self._tempo_encoder_control != None):  #new addition
+        if self._tempo_encoder_control is not None:  #new addition
             self._tempo_encoder_control.remove_value_listener(self._tempo_encoder_value)
             self._tempo_encoder_control = None
         if self._time_button is not None:
@@ -149,13 +149,13 @@ class SpecialTransportComponent(TransportComponent):
     #TransportComponent._tap_tempo_value(self, value)
 
     def _quant_toggle_value(self, value):
-        assert (self._quant_toggle_button != None)
+        assert (self._quant_toggle_button is not None)
         assert (value in range(128))
         assert (self._last_quant_value != Live.Song.RecordingQuantization.rec_q_no_q)
         if self.is_enabled():  # and (not self._shift_pressed):
-            if ((value != 0) or (not self._quant_toggle_button.is_momentary())):
+            if (value != 0) or (not self._quant_toggle_button.is_momentary()):
                 quant_value = self.song().midi_recording_quantization
-                if (quant_value != Live.Song.RecordingQuantization.rec_q_no_q):
+                if quant_value != Live.Song.RecordingQuantization.rec_q_no_q:
                     self._last_quant_value = quant_value
                     self.song().midi_recording_quantization = Live.Song.RecordingQuantization.rec_q_no_q
                 else:
@@ -184,7 +184,7 @@ class SpecialTransportComponent(TransportComponent):
             quant_on = (quant_value != Live.Song.RecordingQuantization.rec_q_no_q)
             if quant_on:
                 self._last_quant_value = quant_value
-            if self._quant_toggle_button != None:  #((not self._shift_pressed) and (self._quant_toggle_button != None)):
+            if self._quant_toggle_button is not None:  #((not self._shift_pressed) and (self._quant_toggle_button != None)):
                 if quant_on:
                     self._quant_toggle_button.turn_on()
                 else:
@@ -195,22 +195,22 @@ class SpecialTransportComponent(TransportComponent):
     def set_undo_button(self, undo_button):
         assert isinstance(undo_button, (ButtonElement,
                                         type(None)))
-        if (undo_button != self._undo_button):
-            if (self._undo_button != None):
+        if undo_button != self._undo_button:
+            if self._undo_button is not None:
                 self._undo_button.remove_value_listener(self._undo_value)
             self._undo_button = undo_button
-            if (self._undo_button != None):
+            if self._undo_button is not None:
                 self._undo_button.add_value_listener(self._undo_value)
             self.update()
 
     def set_redo_button(self, redo_button):
         assert isinstance(redo_button, (ButtonElement,
                                         type(None)))
-        if (redo_button != self._redo_button):
-            if (self._redo_button != None):
+        if redo_button != self._redo_button:
+            if self._redo_button is not None:
                 self._redo_button.remove_value_listener(self._redo_value)
             self._redo_button = redo_button
-            if (self._redo_button != None):
+            if self._redo_button is not None:
                 self._redo_button.add_value_listener(self._redo_value)
             self.update()
 

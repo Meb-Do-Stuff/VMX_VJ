@@ -15,7 +15,6 @@ from .SpecialTransportComponent import SpecialTransportComponent
 from .SpecialSessionComponent import SpecialSessionComponent
 from .SpecialZoomingComponent import SpecialZoomingComponent
 from .SpecialViewControllerComponent import DetailViewControllerComponent
-from .SpecialMenuSystem import SpecialMenuSystem
 from .MIDI_Map import *
 
 
@@ -56,7 +55,6 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
             self._setup_device_and_transport_control()
             self.set_highlighting_session_component(self._session)
             # self.set_suppress_rebuild_requests(False)
-            SpecialMenuSystem(self._note_map)
         self._pads = []
         self._load_pad_translations()
         self._do_combine()
@@ -91,7 +89,7 @@ class VMX_V64(ControlSurface):   # Make sure you update the name
         self._session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_session_control(self):
-        self._session = SpecialSessionComponent(TSB_X, TSB_Y)   # Track selection box size (X,Y) (horizontal, vertical).
+        self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map)   # Track selection box size (X,Y) (horizontal, vertical).
         self._session.name = 'Session_Control'
         self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
         self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])

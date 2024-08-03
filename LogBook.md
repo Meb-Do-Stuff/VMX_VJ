@@ -42,10 +42,11 @@ There are matrix of -1, and I'm quite sure that the wrong amount of -1 would gen
 It's now time to find buttons and everything.
 
 <img src="https://raw.githubusercontent.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/main/Map.png" height="500">
-Outputing is really weird, I'll try again later.
+<br>Outputing is really weird, I'll try again later.
 
-I managed to set that the 16x4 buttons can launch clip, and the 16x2 knobs can managed the Send A & B, and faders manage volume.
-Working on the jog can manage the time, but it's quite hard.
+I managed to set that the 16x4 buttons can launch clip, and the 16x2 knobs can managed the Send A & B, and faders manage volume.<br>
+The jog can now manage time.<br>
+Working on a menu system so you can do anything with it.
 
 ---
 
@@ -54,3 +55,4 @@ Moral support:<br>
 [David August's Boiler Room](https://soundcloud.com/platform/david-august?si=6f764d61632349fcb5e680b10d23418d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
 [David August's Innervisions #50 LIVE Podcast](https://soundcloud.com/davidaugust/innervisions-50-live-podcast?si=6fd98977e3b647429ca6c9d1a45be392&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
 [Rimarkable's Boiler Room](https://youtu.be/hoyCaeT_tuo)<br>
+[Four Tet's Boiler Room](https://www.youtube.com/watch?v=Ca6pjR2TLns)<br>
