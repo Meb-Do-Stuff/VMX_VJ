@@ -6,7 +6,7 @@ class SpecialMixerComponent(MixerComponent):
     """ Special mixer class that uses return tracks alongside midi and audio tracks """
     __module__ = __name__
 
-    def __init__(self, num_tracks, track_left, track_right):
+    def __init__(self, num_tracks, track_left, track_right, jog_wheel):
         MixerComponent.__init__(self, num_tracks)
         self.num_tracks = num_tracks
         self.volumes_faders = []
@@ -15,6 +15,7 @@ class SpecialMixerComponent(MixerComponent):
         self.track_left = track_left
         self.track_right = track_right
         self.clip_launch_buttons = []
+        self._jog_wheel = jog_wheel
 
     def tracks_to_use(self):
         return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
@@ -35,6 +36,15 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_pan_control(self.send_a[track])
             strip.set_send_controls((None, None, self.send_b[track]))
             strip.set_invert_mute_feedback(True)
+        if self._jog_wheel is not None:
+            self._jog_wheel.add_value_listener(self._master_control)
+        self.update()
+
+    def _master_control(self, value):
+        if value == 0:
+            self.song().master_track.mixer_device.volume.value -= 0.01
+        else:
+            self.song().master_track.mixer_device.volume.value += 0.01
 
     def unbind_alt(self):
         self.set_select_buttons(None, None)
@@ -49,4 +59,6 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_pan_control(None)
             strip.set_send_controls((self.send_a[track], self.send_b[track], None))
             strip.set_invert_mute_feedback(True)
+        if self._jog_wheel is not None:
+            self._jog_wheel.remove_value_listener(self._master_control)
         self.update_all()

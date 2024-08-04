@@ -90,7 +90,7 @@ class VMX_V64(ControlSurface):
         self._session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_mixer_control(self):
-        self._mixer = SpecialMixerComponent(TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT])
+        self._mixer = SpecialMixerComponent(TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT], self._jog_wheel)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])

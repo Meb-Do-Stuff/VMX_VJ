@@ -21,7 +21,7 @@ class SpecialSessionComponent(SessionComponent):
         # self._igniter.is_momentary = False
         self._buttons = buttons
         self._mixer = mixer
-        self._transport = None
+        self._transport = transport
         self.clip_launch_buttons = []
         self._setup_igniter()
         self._last_known_listener = []
@@ -55,7 +55,6 @@ class SpecialSessionComponent(SessionComponent):
         SessionComponent.disconnect(self)
         if self._slot_launch_button is not None:
             self._slot_launch_button.remove_value_listener(self._slot_launch_value)
-
             self._slot_launch_button = None
 
     def link_with_track_offset(self, track_offset, scene_offset):

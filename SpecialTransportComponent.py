@@ -32,43 +32,22 @@ class SpecialTransportComponent(TransportComponent):
 
     def disconnect(self):
         TransportComponent.disconnect(self)
-        #if self._shift_button != None:
-        #self._shift_button.remove_value_listener(self._shift_value)
-        #self._shift_button = None
         if self._quant_toggle_button is not None:
             self._quant_toggle_button.remove_value_listener(self._quant_toggle_value)
             self._quant_toggle_button = None
         self.song().remove_midi_recording_quantization_listener(self._on_quantisation_changed)
-        if self._undo_button is not None:  #added from OpenLabs SpecialTransportComponent script
+        if self._undo_button is not None:
             self._undo_button.remove_value_listener(self._undo_value)
             self._undo_button = None
-        if self._redo_button is not None:  #added from OpenLabs SpecialTransportComponent script
+        if self._redo_button is not None:
             self._redo_button.remove_value_listener(self._redo_value)
             self._redo_button = None
-        #if (self._bts_button != None): #added from OpenLabs SpecialTransportComponent script
-        #self._bts_button.remove_value_listener(self._bts_value)
-        #self._bts_button = None
-        if self._tempo_encoder_control is not None:  #new addition
+        if self._tempo_encoder_control is not None:
             self._tempo_encoder_control.remove_value_listener(self._tempo_encoder_value)
             self._tempo_encoder_control = None
         if self.time_button is not None:
             self.time_button.remove_value_listener(self._time_value)
             self.time_button = None
-        return None
-
-    #def set_shift_button(self, button):
-    #if not(button == None or isinstance(button, ButtonElement) and button.is_momentary()):
-    #isinstance(button, ButtonElement)
-    #raise AssertionError
-    #if self._shift_button != button:
-    #if self._shift_button != None:
-    #self._shift_button.remove_value_listener(self._shift_value)
-    #self._shift_button = button
-    #if self._shift_button != None:
-    #self._shift_button.add_value_listener(self._shift_value)
-    #
-    #self.update()
-    #return None
 
     def set_quant_toggle_button(self, button):
         if not (button is None or isinstance(button, ButtonElement) and button.is_momentary()):
@@ -80,7 +59,6 @@ class SpecialTransportComponent(TransportComponent):
             self._quant_toggle_button = button
             if self._quant_toggle_button is not None:
                 self._quant_toggle_button.add_value_listener(self._quant_toggle_value)
-
             self.update()
 
     def set_jog_wheel_time(self):
@@ -109,48 +87,6 @@ class SpecialTransportComponent(TransportComponent):
         if self.time_button is not None:
             self.time_button.remove_value_listener(self._time_value)
 
-    #def update(self):
-    #self._on_metronome_changed()
-    #self._on_overdub_changed()
-    #self._on_quantisation_changed()
-    #self._on_nudge_up_changed() #added
-    #self._on_nudge_down_changed #added
-
-    #def _shift_value(self, value):
-    #if not self._shift_button != None:
-    #raise AssertionError
-    #if not value in range(128):
-    #raise AssertionError
-    #self._shift_pressed = value != 0
-    #if self.is_enabled():
-    #self.is_enabled()
-    #self.update()
-    #else:
-    #self.is_enabled()
-    #return None
-
-    #def _metronome_value(self, value):
-    #if not self._shift_pressed:
-    ###if self._shift_pressed:
-    #TransportComponent._metronome_value(self, value)
-
-    #def _overdub_value(self, value):
-    #if not self._shift_pressed:
-    #TransportComponent._overdub_value(self, value)
-
-    #def _nudge_up_value(self, value): #added
-    #if not self._shift_pressed:
-    #TransportComponent._nudge_up_value(self, value)
-
-    #def _nudge_down_value(self, value): #added
-    #if not self._shift_pressed:
-    #TransportComponent._nudge_down_value(self, value)
-
-    #def _tap_tempo_value(self, value): # Added as Shift + Tap Tempo
-    #if not self._shift_pressed:
-    ##if self._shift_pressed:
-    #TransportComponent._tap_tempo_value(self, value)
-
     def _quant_toggle_value(self, value):
         assert (self._quant_toggle_button is not None)
         assert (value in range(128))
@@ -163,23 +99,6 @@ class SpecialTransportComponent(TransportComponent):
                     self.song().midi_recording_quantization = Live.Song.RecordingQuantization.rec_q_no_q
                 else:
                     self.song().midi_recording_quantization = self._last_quant_value
-
-    #def _on_metronome_changed(self):
-    #if not self._shift_pressed:
-    ##if self._shift_pressed:
-    #TransportComponent._on_metronome_changed(self)
-
-    #def _on_overdub_changed(self):
-    #if not self._shift_pressed:
-    #TransportComponent._on_overdub_changed(self)
-
-    #def _on_nudge_up_changed(self): #added
-    #if not self._shift_pressed:
-    #TransportComponent._on_nudge_up_changed(self)
-
-    #def _on_nudge_down_changed(self): #added
-    #if not self._shift_pressed:
-    #TransportComponent._on_nudge_down_changed(self)
 
     def _on_quantisation_changed(self):
         if self.is_enabled():
@@ -217,49 +136,27 @@ class SpecialTransportComponent(TransportComponent):
                 self._redo_button.add_value_listener(self._redo_value)
             self.update()
 
-    #def set_bts_button(self, bts_button): #"back to start" button
-    #assert isinstance(bts_button, (ButtonElement,
-    #type(None)))
-    #if (bts_button != self._bts_button):
-    #if (self._bts_button != None):
-    #self._bts_button.remove_value_listener(self._bts_value)
-    #self._bts_button = bts_button
-    #if (self._bts_button != None):
-    #self._bts_button.add_value_listener(self._bts_value)
-    #self.update()
-
     def _undo_value(self, value):
-        #if self._shift_pressed: #added
-        assert (self._undo_button != None)
+        assert (self._undo_button is not None)
         assert (value in range(128))
         if self.is_enabled():
-            if ((value != 0) or (not self._undo_button.is_momentary())):
+            if (value != 0) or (not self._undo_button.is_momentary()):
                 if self.song().can_undo:
                     self.song().undo()
 
     def _redo_value(self, value):
-        #if self._shift_pressed: #added
-        assert (self._redo_button != None)
+        assert (self._redo_button is not None)
         assert (value in range(128))
         if self.is_enabled():
-            if ((value != 0) or (not self._redo_button.is_momentary())):
+            if (value != 0) or (not self._redo_button.is_momentary()):
                 if self.song().can_redo:
                     self.song().redo()
 
-    #def _bts_value(self, value):
-    #assert (self._bts_button != None)
-    #assert (value in range(128))
-    #if self.is_enabled():
-    #if ((value != 0) or (not self._bts_button.is_momentary())):
-    #self.song().current_song_time = 0.0
-
     def _tempo_encoder_value(self, value):
-        ##if not self._shift_pressed:
-        #if self._shift_pressed:
-        assert (self._tempo_encoder_control != None)
+        assert (self._tempo_encoder_control is not None)
         assert (value in range(128))
         backwards = (value >= 64)
-        step = 0.1  #step = 1.0 #reduce this for finer control; 1.0 is 1 bpm
+        step = 0.1
         if backwards:
             amount = (value - 128)
         else:
@@ -268,18 +165,18 @@ class SpecialTransportComponent(TransportComponent):
         self.song().tempo = tempo
 
     def set_tempo_encoder(self, control):
-        assert ((control == None) or (isinstance(control, EncoderElement) and (
+        assert ((control is None) or (isinstance(control, EncoderElement) and (
                 control.message_map_mode() is Live.MidiMap.MapMode.relative_two_compliment)))
-        if (self._tempo_encoder_control != None):
+        if self._tempo_encoder_control is not None:
             self._tempo_encoder_control.remove_value_listener(self._tempo_encoder_value)
         self._tempo_encoder_control = control
-        if (self._tempo_encoder_control != None):
+        if self._tempo_encoder_control is not None:
             self._tempo_encoder_control.add_value_listener(self._tempo_encoder_value)
         self.update()
 
     @subject_slot('value')
-    def _tempo_value(self, value):  #Override to pull tempo range from MIDI_Maps.py
-        assert (self._tempo_control != None)
+    def _tempo_value(self, value):
+        assert (self._tempo_control is not None)
         assert (value in range(128))
         if self.is_enabled():
             fraction = ((TEMPO_TOP - TEMPO_BOTTOM) / 127.0)
