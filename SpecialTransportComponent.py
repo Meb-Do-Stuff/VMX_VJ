@@ -28,7 +28,7 @@ class SpecialTransportComponent(TransportComponent):
         self._redo_button = None  #added from OpenLabs SpecialTransportComponent script
         #self._bts_button = None #added from OpenLabs SpecialTransportComponent script
         self._tempo_encoder_control = None  #new addition
-        self._time_button = None
+        self.time_button = None
 
     def disconnect(self):
         TransportComponent.disconnect(self)
@@ -51,9 +51,9 @@ class SpecialTransportComponent(TransportComponent):
         if self._tempo_encoder_control is not None:  #new addition
             self._tempo_encoder_control.remove_value_listener(self._tempo_encoder_value)
             self._tempo_encoder_control = None
-        if self._time_button is not None:
-            self._time_button.remove_value_listener(self._time_value)
-            self._time_button = None
+        if self.time_button is not None:
+            self.time_button.remove_value_listener(self._time_value)
+            self.time_button = None
         return None
 
     #def set_shift_button(self, button):
@@ -83,28 +83,31 @@ class SpecialTransportComponent(TransportComponent):
 
             self.update()
 
-    def set_time(self, button):
+    def set_jog_wheel_time(self):
         """
         Hook jog to time control
         """
-        if self._time_button != button:
-            if self._time_button is not None:
-                self._time_button.remove_value_listener(self._time_value)
-            self._time_button = button
-            if self._time_button is not None:
-                self._time_button.add_value_listener(self._time_value)
-            self.update()
+        if self.time_button is not None:
+            self.time_button.add_value_listener(self._time_value)
+        self.update()
 
     def _time_value(self, value):
         """
         Function to move the current song time, 0 is left, else it's right
         """
-        assert (self._time_button is not None)
+        assert (self.time_button is not None)
         if self.is_enabled():
             if value == 0:
                 self._move_current_song_time(-1, 1)
             else:
                 self._move_current_song_time(1, 1)
+
+    def unbind_jog_wheel(self):
+        """
+        Bind jog wheel to time control
+        """
+        if self.time_button is not None:
+            self.time_button.remove_value_listener(self._time_value)
 
     #def update(self):
     #self._on_metronome_changed()

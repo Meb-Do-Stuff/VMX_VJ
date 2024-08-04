@@ -50,10 +50,10 @@ class VMX_V64(ControlSurface):
             self._session = None
             self._session_zoom = None
             self._mixer = None
+            self._transport = None
             self._setup_mixer_control()
-            self._setup_session_control()
-            self._session.set_mixer(self._mixer)
             self._setup_device_and_transport_control()
+            self._setup_session_control()
             self.set_highlighting_session_component(self._session)
             # self.set_suppress_rebuild_requests(False)
         self._pads = []
@@ -106,7 +106,7 @@ class VMX_V64(ControlSurface):
         self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
 
     def _setup_session_control(self):
-        self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer)  # Track selection box size (X,Y) (horizontal, vertical).
+        self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer, self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
         self._session.name = 'Session_Control'
         self._session.session_down = self._note_map[SESSIONDOWN]
         self._session.session_up = self._note_map[SESSIONUP]
@@ -159,23 +159,24 @@ class VMX_V64(ControlSurface):
         detail_view_toggler.set_detail_toggle_button(self._note_map[DETAILVIEW])
         detail_view_toggler.set_device_nav_buttons(self._note_map[DEVICENAVLEFT], self._note_map[DEVICENAVRIGHT])
 
-        transport = SpecialTransportComponent()
-        transport.name = 'Transport'
-        transport.set_play_button(self._note_map[PLAY])
-        transport.set_stop_button(self._note_map[STOP])
-        transport.set_record_button(self._note_map[REC])
-        transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
-        transport.set_undo_button(self._note_map[UNDO])
-        transport.set_redo_button(self._note_map[REDO])
-        transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
-        transport.set_quant_toggle_button(self._note_map[RECQUANT])
-        transport.set_overdub_button(self._note_map[OVERDUB])
-        transport.set_metronome_button(self._note_map[METRONOME])
-        transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
-        transport.set_loop_button(self._note_map[LOOP])
-        transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
-        transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
-        transport.set_time(self._jog_wheel)
+        self._transport = SpecialTransportComponent()
+        self._transport.name = 'Transport'
+        self._transport.set_play_button(self._note_map[PLAY])
+        self._transport.set_stop_button(self._note_map[STOP])
+        self._transport.set_record_button(self._note_map[REC])
+        self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
+        self._transport.set_undo_button(self._note_map[UNDO])
+        self._transport.set_redo_button(self._note_map[REDO])
+        self._transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
+        self._transport.set_quant_toggle_button(self._note_map[RECQUANT])
+        self._transport.set_overdub_button(self._note_map[OVERDUB])
+        self._transport.set_metronome_button(self._note_map[METRONOME])
+        self._transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
+        self._transport.set_loop_button(self._note_map[LOOP])
+        self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
+        self._transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
+        self._transport.time_button = self._jog_wheel
+        self._transport.set_jog_wheel_time()
 
     def _on_selected_track_changed(self):
         ControlSurface._on_selected_track_changed(self)

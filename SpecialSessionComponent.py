@@ -11,7 +11,7 @@ class SpecialSessionComponent(SessionComponent):
     """ Special SessionComponent for VMX V64 combination mode and button to fire selected clip slot, as well as an alt system """
     __module__ = __name__
 
-    def __init__(self, num_tracks, num_scenes, buttons, mixer):
+    def __init__(self, num_tracks, num_scenes, buttons, mixer, transport):
         SessionComponent.__init__(self, num_tracks, num_scenes)
         self.num_scenes = num_scenes
         self.num_tracks = num_tracks
@@ -21,6 +21,7 @@ class SpecialSessionComponent(SessionComponent):
         # self._igniter.is_momentary = False
         self._buttons = buttons
         self._mixer = mixer
+        self._transport = None
         self.clip_launch_buttons = []
         self._setup_igniter()
         self._last_known_listener = []
@@ -100,29 +101,28 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
-        if value == 127:  # Menu open
+        if value == 127 and not self._alt0_igniter.is_pressed():  # Scene launch mod open
             self.unbind_clip_launch()
             for scene_index in range(self.num_scenes):
                 scene = self.scene(scene_index)
                 scene.name = 'Scene_' + str(scene_index)
-                button = self.clip_launch_buttons[scene_index][-1]
-                button.is_momentary = False
-                scene.set_launch_button(button)
+                scene.set_launch_button(self.clip_launch_buttons[scene_index][-1])  # Button is in push mode while it's toggle (problem comes from scene scripts (have to figure out a way to bypass the problem))
                 scene.set_triggered_value(2)
         elif value == 0:
             for scene_index in range(self.num_scenes):
-                scene = self.scene(scene_index)
-                scene.set_launch_button(None)
+                self.scene(scene_index).set_launch_button(None)
             self.setup_clip_launch()
 
     def _engage_alt(self, value):
-        if value == 127:  # Alt enabled
+        if value == 127 and not self._alt1_igniter.is_pressed():  # Alt enabled
             self.set_track_bank_buttons(None, None)
             self.set_scene_bank_buttons(None, None)
             self.set_select_buttons(self.session_down, self.session_up)
             self.unbind_clip_launch()
             self._mixer.alt_binding()
+            self._transport.unbind_jog_wheel()
         elif value == 0:  # Alt disabled
             self.view_setup()
             self.setup_clip_launch()
             self._mixer.unbind_alt()
+            self._transport.set_jog_wheel_time()
