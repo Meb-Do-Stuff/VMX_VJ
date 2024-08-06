@@ -207,6 +207,8 @@ class VMX_V64(ControlSurface):
             button.name = 'Note_' + str(note)
             self._note_map.append(button)
 
+            # button.turn_off()
+
         self._note_map.append(None)  # add None to the end of the list, selectable with [-1]
         if MESSAGETYPE == MIDI_CC_TYPE and BUTTONCHANNEL == SLIDERCHANNEL:
             for ctrl in range(128):

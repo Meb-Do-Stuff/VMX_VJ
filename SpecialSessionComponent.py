@@ -100,9 +100,10 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
+        self._engage_trackLaunch(value)
         if value == 127 and not self._alt0_igniter.is_pressed():  # Scene launch mod open
             self.unbind_clip_launch()
-            for scene_index in range(self.num_scenes):
+            for scene_index in range(self.num_scenes - 1):
                 scene = self.scene(scene_index)
                 scene.name = 'Scene_' + str(scene_index)
                 scene.set_launch_button(self.clip_launch_buttons[scene_index][-1])  # Button is in push mode while it's toggle (problem comes from scene scripts (have to figure out a way to bypass the problem))
@@ -111,6 +112,13 @@ class SpecialSessionComponent(SessionComponent):
             for scene_index in range(self.num_scenes):
                 self.scene(scene_index).set_launch_button(None)
             self.setup_clip_launch()
+
+    def _engage_trackLaunch(self, value):
+        if value == 127 and not self._alt1_igniter.is_pressed():
+            self.unbind_clip_launch()
+            self.set_stop_track_clip_buttons([self.clip_launch_buttons[-1][track_index] for track_index in range(self.num_tracks-1)])
+        elif value == 0:
+            self.set_stop_track_clip_buttons([])
 
     def _engage_alt(self, value):
         if value == 127 and not self._alt1_igniter.is_pressed():  # Alt enabled

@@ -43,15 +43,7 @@ DEVICENAVLEFT = -1  # Device nav left
 DEVICENAVRIGHT = -1  # Device nav right
 DEVICEBANKNAVLEFT = -1  # Device bank nav left
 DEVICEBANKNAVRIGHT = -1  # Device bank nav right
-DEVICEBANK = (-1,  # Bank 1
-              -1,  # Bank 2
-              -1,  # Bank 3
-              -1,  # Bank 4
-              -1,  # Bank 5
-              -1,  # Bank 6
-              -1,  # Bank 7
-              -1,  # Bank 8
-              )
+DEVICEBANK = tuple([-1] * 8)  # Device bank buttons
 
 # Arrangement View Controls
 SEEKFWD = -1  # Seek forward
@@ -69,11 +61,7 @@ ZOOMRIGHT = -1  # Session Zoom right
 
 # Scene Launch
 SELSCENELAUNCH = -1  # Selected scene launch
-SCENELAUNCH = (-1,  # Scene 1 Launch
-               -1,  # Scene 2
-               -1,  # Scene 3
-               -1,  # Scene 4
-               )
+SCENELAUNCH = tuple([-1] * 4)  # Scene launch buttons
 
 # Clip Launch / Stop
 SELCLIPLAUNCH = 70  # Selected clip launch
@@ -93,95 +81,15 @@ SELTRACKREC = -1  # Arm Selected Track
 SELTRACKSOLO = -1  # Solo Selected Track
 SELTRACKMUTE = -1  # Mute Selected Track
 
-TRACKSTOP = (-1,  # Track 1 Clip Stop
-             -1,  # Track 2
-             -1,  # Track 3
-             -1,  # Track 4
-             -1,  # Track 5
-             -1,  # Track 6
-             -1,  # Track 7
-             -1,  # Track 8
-             -1,  # Track 9
-             -1,  # Track 10
-             -1,  # Track 11
-             -1,  # Track 12
-             -1,  # Track 13
-             -1,  # Track 14
-             -1,  # Track 15
-             -1,  # Track 16
-             )
+TRACKSTOP = tuple([-1] * 16)  # Track stop buttons
 
-TRACKSEL = (-1,  # Track 1 Select
-            -1,  # Track 2
-            -1,  # Track 3
-            -1,  # Track 4
-            -1,  # Track 5
-            -1,  # Track 6
-            -1,  # Track 7
-            -1,  # Track 8
-            -1,  # Track 9
-            -1,  # Track 10
-            -1,  # Track 11
-            -1,  # Track 12
-            -1,  # Track 13
-            -1,  # Track 14
-            -1,  # Track 15
-            -1,  # Track 16
-            )
+TRACKSEL = tuple([-1] * 16)  # Track select buttons
 
-TRACKMUTE = (-1,  # Track 1 On/Off
-             -1,  # Track 2
-             -1,  # Track 3
-             -1,  # Track 4
-             -1,  # Track 5
-             -1,  # Track 6
-             -1,  # Track 7
-             -1,  # Track 8
-             -1,  # Track 9
-             -1,  # Track 10
-             -1,  # Track 11
-             -1,  # Track 12
-             -1,  # Track 13
-             -1,  # Track 14
-             -1,  # Track 15
-             -1,  # Track 16
-             )
+TRACKMUTE = tuple([-1] * 16)  # Track mute buttons
 
-TRACKSOLO = (-1,  # Track 1 Solo
-             -1,  # Track 2
-             -1,  # Track 3
-             -1,  # Track 4
-             -1,  # Track 5
-             -1,  # Track 6
-             -1,  # Track 7
-             -1,  # Track 8
-             -1,  # Track 9
-             -1,  # Track 10
-             -1,  # Track 11
-             -1,  # Track 12
-             -1,  # Track 13
-             -1,  # Track 14
-             -1,  # Track 15
-             -1,  # Track 16
-             )
+TRACKSOLO = tuple([-1] * 16)  # Track solo buttons
 
-TRACKREC = (-1,  # Track 1 Record
-            -1,  # Track 2
-            -1,  # Track 3
-            -1,  # Track 4
-            -1,  # Track 5
-            -1,  # Track 6
-            -1,  # Track 7
-            -1,  # Track 8
-            -1,  # Track 9
-            -1,  # Track 10
-            -1,  # Track 11
-            -1,  # Track 12
-            -1,  # Track 13
-            -1,  # Track 14
-            -1,  # Track 15
-            -1,  # Track 16
-            )
+TRACKREC = tuple([-1] * 16)  # Track record arm buttons
 
 # Pad Translations for Drum Rack
 PADCHANNEL = 0  # MIDI channel for Drum Rack notes
@@ -214,23 +122,7 @@ TRACKVOL = (118,  # Track 1 Volume
             116,  # Track 8
             )
 
-TRACKPAN = (-1,  # Track 1 Pan
-            -1,  # Track 2
-            -1,  # Track 3
-            -1,  # Track 4
-            -1,  # Track 5
-            -1,  # Track 6
-            -1,  # Track 7
-            -1,  # Track 8
-            -1,  # Track 9
-            -1,  # Track 10
-            -1,  # Track 11
-            -1,  # Track 12
-            -1,  # Track 13
-            -1,  # Track 14
-            -1,  # Track 15
-            -1,  # Track 16
-            )
+TRACKPAN = tuple([-1] * 16)  # Track pan controls
 
 TRACKSENDA = (81,  # Track 1 Send A
               83,  # Track 2
@@ -268,33 +160,9 @@ TRACKSENDB = (82,  # Track 1 Send B
               112,  # Track 16
               )
 
-TRACKSENDC = (-1,  # Track 1 Send C
-              -1,  # Track 2
-              -1,  # Track 3
-              -1,  # Track 4
-              -1,  # Track 5
-              -1,  # Track 6
-              -1,  # Track 7
-              -1,  # Track 8
-              -1,  # Track 9
-              -1,  # Track 10
-              -1,  # Track 11
-              -1,  # Track 12
-              -1,  # Track 13
-              -1,  # Track 14
-              -1,  # Track 15
-              -1,  # Track 16
-              )
+TRACKSENDC = tuple([-1] * 16)  # Track send C controls
 
-PARAMCONTROL = (-1,  # Param 1 #All ? params must be assigned to positive values in order for param control to work
-                -1,  # Param 2
-                -1,  # Param 3
-                -1,  # Param 4
-                -1,  # Param 5
-                -1,  # Param 6
-                -1,  # Param 7
-                -1,  # Param 8
-                )
+PARAMCONTROL = tuple([-1] * 16)  # Device control
 
 # Custom Menu
 # ----------
