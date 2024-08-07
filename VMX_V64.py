@@ -122,6 +122,7 @@ class VMX_V64(ControlSurface):
         self.session.selected_scene().name = 'Selected_Scene'
         self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
+        self.session.delete_button = self._note_map[DELETE]
         for scene_index in range(TSB_Y):
             button_row = []
             for track_index in range(TSB_X):

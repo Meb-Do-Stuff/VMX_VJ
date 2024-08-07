@@ -29,6 +29,7 @@ class SpecialSessionComponent(SessionComponent):
         self.session_left = None
         self.session_up = None
         self.session_down = None
+        self.delete_button = None
 
     def setup_clip_launch(self):
         for scene_index in range(self.num_scenes):
@@ -101,7 +102,7 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
-        if value == 127 and not self._alt0_igniter.is_pressed():  # Scene launch mod open
+        if value == 127 and not self._alt0_igniter.is_pressed() and not self.delete_button.is_pressed():  # Scene launch mod open
             self.unbind_clip_launch()
             for scene_index in range(self.num_scenes - 1):
                 scene = self.scene(scene_index)
@@ -116,7 +117,7 @@ class SpecialSessionComponent(SessionComponent):
             self.setup_clip_launch()
 
     def _engage_alt(self, value):
-        if value == 127 and not self._alt1_igniter.is_pressed():  # Alt enabled
+        if value == 127 and not self._alt1_igniter.is_pressed() and not self.delete_button.is_pressed():  # Alt enabled
             self.set_track_bank_buttons(None, None)
             self.set_scene_bank_buttons(None, None)
             self.set_select_buttons(self.session_down, self.session_up)
@@ -130,3 +131,12 @@ class SpecialSessionComponent(SessionComponent):
             self._mixer.unbind_alt()
             self._transport.set_jog_wheel_time()
             self.unset_slot_launch_button()
+
+    def deletion_manager(self):
+        self.delete_button.add_value_listener(self._deletion)
+
+    def _deletion(self, value):
+        if value == 127 and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed():
+            self.unbind_clip_launch()
+        if value == 0:
+            self.setup_clip_launch()

@@ -19,9 +19,10 @@ TSB_X = 16  # Controls the vertical value for the track selection box. Default v
 TSB_Y = 4  # Controls the horizontal value for the track selection box. Default value is 8
 
 # General
-PLAY = -1  # Global play
-STOP = -1  # Global stop
-REC = -1  # Global record
+PLAY = 80  # Global play
+STOP = 79  # Global stop
+REC = 77  # Global record
+DELETE = 69  # Delete selected clip
 TAPTEMPO = -1  # Tap tempo
 NUDGEUP = -1  # Tempo Nudge Up
 NUDGEDOWN = -1  # Tempo Nudge Down
@@ -65,10 +66,10 @@ SCENELAUNCH = tuple([-1] * 4)  # Scene launch buttons
 
 # Clip Launch / Stop
 SELCLIPLAUNCH = 70  # Selected clip launch
-STOPALLCLIPS = 80  # Stop all clips
+STOPALLCLIPS = 78  # Stop all clips
 
 # 8x8 Matrix note assignments
-# Track no.:     1   2   3   4   5   6   7   8   9   10   11   12   13   14   15   16
+# Track no.:    1  2  3  4  5   6   7   8   9   10  11  12  13  14  15  16
 CLIPNOTEMAP = ((1, 2, 3, 4, 17, 18, 19, 20, 33, 34, 35, 36, 49, 50, 51, 52),  # Row 1
                (5, 6, 7, 8, 21, 22, 23, 24, 37, 38, 39, 40, 53, 54, 55, 56),  # Row 2
                (9, 10, 11, 12, 25, 26, 27, 28, 41, 42, 43, 44, 57, 58, 59, 60),  # Row 3
