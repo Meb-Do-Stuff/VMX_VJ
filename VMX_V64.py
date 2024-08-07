@@ -131,6 +131,7 @@ class VMX_V64(ControlSurface):
             self.session.clip_launch_buttons.append(button_row)
             self._mixer.clip_launch_buttons.append(button_row)
         self.session.setup_clip_launch()
+        self.session.deletion_manager()
         self._session_zoom = SpecialZoomingComponent(self.session)
         self._session_zoom.name = 'Session_Overview'
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],

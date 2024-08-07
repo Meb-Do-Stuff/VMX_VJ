@@ -32,11 +32,11 @@ class SpecialSessionComponent(SessionComponent):
         self.delete_button = None
 
     def setup_clip_launch(self):
+        self.unbind_clip_launch()
         for scene_index in range(self.num_scenes):
             scene = self.scene(scene_index)
             scene.name = 'Scene_' + str(scene_index)
             button_row = []
-            # scene.set_launch_button(self._scene_launch_buttons[scene_index])
             scene.set_triggered_value(2)
             for track_index in range(self.num_tracks):
                 button = self.clip_launch_buttons[scene_index][track_index]
@@ -51,6 +51,21 @@ class SpecialSessionComponent(SessionComponent):
             for track_index in range(self.num_tracks):
                 clip_slot = scene.clip_slot(track_index)
                 clip_slot.set_launch_button(None)
+
+    def setup_clip_delete(self):
+        self.unbind_clip_launch()
+        for scene_index in range(self.num_scenes):
+            scene = self.scene(scene_index)
+            scene.name = 'Scene_' + str(scene_index)
+            button_row = []
+            scene.set_triggered_value(2)
+            for track_index in range(self.num_tracks):
+                button = self.clip_launch_buttons[scene_index][track_index]
+                button_row.append(button)
+                clip_slot = scene.clip_slot(track_index)
+                clip_slot.name = str(track_index) + '_Clip_Slot_' + str(scene_index)
+                clip_slot.set_delete_button(button)
+                # clip_slot.set_launch_button(button)
 
     def disconnect(self):
         SessionComponent.disconnect(self)
@@ -134,9 +149,12 @@ class SpecialSessionComponent(SessionComponent):
 
     def deletion_manager(self):
         self.delete_button.add_value_listener(self._deletion)
+        self.update()
 
     def _deletion(self, value):
         if value == 127 and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed():
-            self.unbind_clip_launch()
+            Live.Base.log("Delete button pressed")
+            self.setup_clip_delete()
         if value == 0:
+            Live.Base.log("Delete button released")
             self.setup_clip_launch()
