@@ -1,5 +1,4 @@
 from __future__ import with_statement
-
 import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import *
@@ -32,8 +31,8 @@ class VMX_V64(ControlSurface):
         track_offset = 0
         scene_offset = 0
         for instance in VMX_V64._active_instances:
-            instance._activate_combination_mode(track_offset, scene_offset)
-            track_offset += instance._session.width()
+            instance.activate_combination_mode(track_offset, scene_offset)
+            track_offset += instance.session.width()
 
     _combine_active_instances = staticmethod(_combine_active_instances)
 
@@ -47,14 +46,14 @@ class VMX_V64(ControlSurface):
             self._load_MIDI_map()
             self._jog_wheel = None
             self._load_jog_wheel()
-            self._session = None
+            self.session = None
             self._session_zoom = None
             self._mixer = None
             self._transport = None
             self._setup_mixer_control()
             self._setup_device_and_transport_control()
             self._setup_session_control()
-            self.set_highlighting_session_component(self._session)
+            self.set_highlighting_session_component(self.session)
             # self.set_suppress_rebuild_requests(False)
         self._pads = []
         self._load_pad_translations()
@@ -63,13 +62,14 @@ class VMX_V64(ControlSurface):
     def disconnect(self):
         self._note_map = None
         self._ctrl_map = None
+        self._menu_map = None
+        self._jog_wheel = None
         self._pads = None
         self._do_uncombine()
-        self._shift_button = None
-        self._session = None
+        self.session = None
         self._session_zoom = None
         self._mixer = None
-        self._jog_wheel = None
+        self._transport = None
         ControlSurface.disconnect(self)
 
     def _do_combine(self):
@@ -79,15 +79,15 @@ class VMX_V64(ControlSurface):
 
     def _do_uncombine(self):
         if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(self):
-            self._session.unlink()
+            self.session.unlink()
             VMX_V64._combine_active_instances()
 
-    def _activate_combination_mode(self, track_offset, scene_offset):
+    def activate_combination_mode(self, track_offset, scene_offset):
         if TRACK_OFFSET != -1:
             track_offset = TRACK_OFFSET
         if SCENE_OFFSET != -1:
             scene_offset = SCENE_OFFSET
-        self._session.link_with_track_offset(track_offset, scene_offset)
+        self.session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_mixer_control(self):
         self._mixer = SpecialMixerComponent(TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT], self._jog_wheel)
@@ -106,31 +106,31 @@ class VMX_V64(ControlSurface):
         self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
 
     def _setup_session_control(self):
-        self._session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer, self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
-        self._session.name = 'Session_Control'
-        self._session.session_down = self._note_map[SESSIONDOWN]
-        self._session.session_up = self._note_map[SESSIONUP]
-        self._session.session_left = self._note_map[SESSIONLEFT]
-        self._session.session_right = self._note_map[SESSIONRIGHT]
-        self._session.view_setup()
+        self.session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer, self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
+        self.session.name = 'Session_Control'
+        self.session.session_down = self._note_map[SESSIONDOWN]
+        self.session.session_up = self._note_map[SESSIONUP]
+        self.session.session_left = self._note_map[SESSIONLEFT]
+        self.session.session_right = self._note_map[SESSIONRIGHT]
+        self.session.view_setup()
         # range(tsb_x) Range value is the track selection
         self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]
         # range(tsb_y) is the horizontal count for the track selection box
         self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in range(TSB_Y)]
-        self._session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
-        self._session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
-        self._session.selected_scene().name = 'Selected_Scene'
-        self._session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
-        self._session.set_slot_launch_button(self._note_map[SELCLIPLAUNCH])
+        self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
+        self.session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
+        self.session.selected_scene().name = 'Selected_Scene'
+        self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
+        self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
         for scene_index in range(TSB_Y):
             button_row = []
             for track_index in range(TSB_X):
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
                 button_row.append(button)
-            self._session.clip_launch_buttons.append(button_row)
+            self.session.clip_launch_buttons.append(button_row)
             self._mixer.clip_launch_buttons.append(button_row)
-        self._session.setup_clip_launch()
-        self._session_zoom = SpecialZoomingComponent(self._session)
+        self.session.setup_clip_launch()
+        self._session_zoom = SpecialZoomingComponent(self.session)
         self._session_zoom.name = 'Session_Overview'
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
                                            self._note_map[ZOOMRIGHT])
@@ -190,7 +190,6 @@ class VMX_V64(ControlSurface):
 
     def _load_pad_translations(self):
         if -1 not in DRUM_PADS:
-            pad = []
             for row in range(4):
                 for col in range(4):
                     pad = (col, row, DRUM_PADS[row * 4 + col], PADCHANNEL,)

@@ -15,7 +15,7 @@ class SpecialSessionComponent(SessionComponent):
         SessionComponent.__init__(self, num_tracks, num_scenes)
         self.num_scenes = num_scenes
         self.num_tracks = num_tracks
-        self._slot_launch_button = None
+        self.slot_launch_button = None
         self._alt0_igniter = buttons[int(sqrt(len(buttons))) * -1]
         self._alt1_igniter = buttons[int(sqrt(len(buttons))) * -1 + 1]
         # self._igniter.is_momentary = False
@@ -53,9 +53,9 @@ class SpecialSessionComponent(SessionComponent):
 
     def disconnect(self):
         SessionComponent.disconnect(self)
-        if self._slot_launch_button is not None:
-            self._slot_launch_button.remove_value_listener(self._slot_launch_value)
-            self._slot_launch_button = None
+        if self.slot_launch_button is not None:
+            self.slot_launch_button.remove_value_listener(self._slot_launch_value)
+            self.slot_launch_button = None
 
     def link_with_track_offset(self, track_offset, scene_offset):
         assert (track_offset >= 0)
@@ -69,21 +69,22 @@ class SpecialSessionComponent(SessionComponent):
         if self._is_linked():
             self._unlink()
 
-    def set_slot_launch_button(self, button):
-        assert ((button is None) or isinstance(button, ButtonElement))
-        if self._slot_launch_button != button:
-            if self._slot_launch_button is not None:
-                self._slot_launch_button.remove_value_listener(self._slot_launch_value)
-            self._slot_launch_button = button
-            if self._slot_launch_button is not None:
-                self._slot_launch_button.add_value_listener(self._slot_launch_value)
+    def set_slot_launch_button(self):
+        assert ((self.slot_launch_button is None) or isinstance(self.slot_launch_button, ButtonElement))
+        if self.slot_launch_button is not None:
+            self.slot_launch_button.add_value_listener(self._slot_launch_value)
+        self.update()
+
+    def unset_slot_launch_button(self):
+        if self.slot_launch_button is not None:
+            self.slot_launch_button.remove_value_listener(self._slot_launch_value)
             self.update()
 
     def _slot_launch_value(self, value):
         assert (value in range(128))
-        assert (self._slot_launch_button is not None)
+        assert (self.slot_launch_button is not None)
         if self.is_enabled():
-            if (value != 0) or (not self._slot_launch_button.is_momentary()):
+            if (value != 0) or (not self.slot_launch_button.is_momentary()):
                 if self.song().view.highlighted_clip_slot is not None:
                     self.song().view.highlighted_clip_slot.fire()
 
@@ -100,7 +101,6 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
-        self._engage_trackLaunch(value)
         if value == 127 and not self._alt0_igniter.is_pressed():  # Scene launch mod open
             self.unbind_clip_launch()
             for scene_index in range(self.num_scenes - 1):
@@ -108,17 +108,12 @@ class SpecialSessionComponent(SessionComponent):
                 scene.name = 'Scene_' + str(scene_index)
                 scene.set_launch_button(self.clip_launch_buttons[scene_index][-1])  # Button is in push mode while it's toggle (problem comes from scene scripts (have to figure out a way to bypass the problem))
                 scene.set_triggered_value(2)
+            self.set_stop_track_clip_buttons([self.clip_launch_buttons[-1][track_index] for track_index in range(self.num_tracks-1)])
         elif value == 0:
             for scene_index in range(self.num_scenes):
                 self.scene(scene_index).set_launch_button(None)
-            self.setup_clip_launch()
-
-    def _engage_trackLaunch(self, value):
-        if value == 127 and not self._alt1_igniter.is_pressed():
-            self.unbind_clip_launch()
-            self.set_stop_track_clip_buttons([self.clip_launch_buttons[-1][track_index] for track_index in range(self.num_tracks-1)])
-        elif value == 0:
             self.set_stop_track_clip_buttons([])
+            self.setup_clip_launch()
 
     def _engage_alt(self, value):
         if value == 127 and not self._alt1_igniter.is_pressed():  # Alt enabled
@@ -128,8 +123,10 @@ class SpecialSessionComponent(SessionComponent):
             self.unbind_clip_launch()
             self._mixer.alt_binding()
             self._transport.unbind_jog_wheel()
+            self.set_slot_launch_button()
         elif value == 0:  # Alt disabled
             self.view_setup()
             self.setup_clip_launch()
             self._mixer.unbind_alt()
             self._transport.set_jog_wheel_time()
+            self.unset_slot_launch_button()
