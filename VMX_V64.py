@@ -104,6 +104,8 @@ class VMX_V64(ControlSurface):
         self._mixer.volumes_faders = [self._ctrl_map[TRACKVOL[index]] for index in range(int(TSB_X / 2))]  # range(tsb_x) (because only 8 faders over 16 tracks)
         self._mixer.send_a = [self._ctrl_map[TRACKSENDA[index]] for index in range(TSB_X)]
         self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
+        self._mixer.delete_button = self._note_map[DELETE]
+        self._mixer.setup_track_deletion()
 
     def _setup_session_control(self):
         self.session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer, self._transport)  # Track selection box size (X,Y) (horizontal, vertical).

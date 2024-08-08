@@ -16,6 +16,8 @@ class SpecialMixerComponent(MixerComponent):
         self.track_right = track_right
         self.clip_launch_buttons = []
         self._jog_wheel = jog_wheel
+        self.delete_button = None
+        self._is_scene_mode = False
 
     def tracks_to_use(self):
         return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
@@ -40,6 +42,9 @@ class SpecialMixerComponent(MixerComponent):
             self._jog_wheel.add_value_listener(self._master_control)
         self.update()
 
+    def set_scene_mode(self, value):
+        self._is_scene_mode = value
+
     def _master_control(self, value):
         if value == 0:
             self.song().master_track.mixer_device.volume.value -= 0.01
@@ -62,3 +67,12 @@ class SpecialMixerComponent(MixerComponent):
         if self._jog_wheel is not None:
             self._jog_wheel.remove_value_listener(self._master_control)
         self.update_all()
+
+    def setup_track_deletion(self):
+        for button in range(self.num_tracks):
+            self.clip_launch_buttons[4][button].add_value_listener(lambda value, index=button: self._delete_track(index, value))
+        self.update()
+
+    def _delete_track(self, index, value):
+        if self.delete_button.is_pressed() and self.:
+            self.song().delete_track(index)
