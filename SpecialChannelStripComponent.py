@@ -20,20 +20,19 @@ class SpecialChannelStripComponent(ChannelStripComponent):
 
     def _select_value(self, value):
         ChannelStripComponent._select_value(self, value)
-        if (self.is_enabled() and (self._track != None)):
-            if (self._track.is_foldable and (self._select_button.is_momentary() and (value != 0))):
+        if self.is_enabled() and (self._track is not None):
+            if self._track.is_foldable and (self._select_button.is_momentary() and (value != 0)):
                 self._toggle_fold_ticks_delay = TRACK_FOLD_DELAY
             else:
                 self._toggle_fold_ticks_delay = -1
 
     def _on_timer(self):
-        if (self.is_enabled() and (self._track != None)):
-            if (self._toggle_fold_ticks_delay > -1):
+        if self.is_enabled() and (self._track is not None):
+            if self._toggle_fold_ticks_delay > -1:
                 assert self._track.is_foldable
-                if (self._toggle_fold_ticks_delay == 0):
+                if self._toggle_fold_ticks_delay == 0:
                     self._track.fold_state = (not self._track.fold_state)
                 self._toggle_fold_ticks_delay -= 1
-
 
 # local variables:
 # tab-width: 4
