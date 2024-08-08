@@ -1,8 +1,3 @@
-# emacs-mode: -*- python-*-
-# -*- coding: utf-8 -*-
-
-import Live
-from ableton.v3.base import compose, find_if
 from _Framework.SessionComponent import SessionComponent
 from _Framework.ButtonElement import ButtonElement
 from math import sqrt
@@ -56,11 +51,12 @@ class SpecialSessionComponent(SessionComponent):
             scene.name = 'Scene_' + str(scene_index)
             scene.set_triggered_value(2)
             for track_index in range(self.num_tracks):
-                self.clip_launch_buttons[scene_index][track_index].add_value_listener(lambda value, cs=scene.clip_slot(track_index): self._delete_clip(cs, value))
+                self.clip_launch_buttons[scene_index][track_index].add_value_listener(lambda value, cs=scene.clip_slot(track_index): self._delete_clip(cs))
 
-    def _delete_clip(self, clip_slot, value):
-        if self.delete_button.is_pressed() and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed() and clip_slot._clip_slot is not None and clip_slot._clip_slot.has_clip:
-            clip_slot._clip_slot.delete_clip()
+    def _delete_clip(self, clip_slot):
+        if not self.delete_button.is_pressed() or self._alt0_igniter.is_pressed() or self._alt1_igniter.is_pressed() or clip_slot._clip_slot is None or not clip_slot._clip_slot.has_clip:
+            return
+        clip_slot._clip_slot.delete_clip()
 
     def disconnect(self):
         SessionComponent.disconnect(self)
@@ -112,20 +108,21 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
-        if value == 127 and not self._alt0_igniter.is_pressed() and not self.delete_button.is_pressed():  # Scene launch mod open
+        if value == 127 and not self._alt0_igniter.is_pressed():  # Scene launch mod open
             self.unbind_clip_launch()
             for scene_index in range(self.num_scenes):
                 scene = self.scene(scene_index)
                 scene.name = 'Scene_' + str(scene_index)
-                scene.set_launch_button(self.clip_launch_buttons[scene_index][
-                                            -1])  # Button is in push mode while it's toggle (problem comes from scene scripts (have to figure out a way to bypass the problem))
+                scene.set_launch_button(self.clip_launch_buttons[scene_index][-1])  # Button is in push mode while it's toggle (problem comes from scene scripts (have to figure out a way to bypass the problem))
                 scene.set_triggered_value(2)
-            self.set_stop_track_clip_buttons([self.clip_launch_buttons[-1][track_index] for track_index in range(self.num_tracks - 1)])
+                self.set_stop_track_clip_buttons([self.clip_launch_buttons[-1][track_index] for track_index in range(self.num_tracks - 1)])
+            self._mixer.set_scene_mode(True)
         elif value == 0:
             for scene_index in range(self.num_scenes):
                 self.scene(scene_index).set_launch_button(None)
             self.set_stop_track_clip_buttons([])
             self.setup_clip_launch()
+            self._mixer.set_scene_mode(False)
 
     def _engage_alt(self, value):
         if value == 127 and not self._alt1_igniter.is_pressed() and not self.delete_button.is_pressed():  # Alt enabled

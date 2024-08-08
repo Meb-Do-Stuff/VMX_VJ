@@ -1,3 +1,4 @@
+import Live
 from _Framework.MixerComponent import MixerComponent
 from .SpecialChannelStripComponent import SpecialChannelStripComponent
 
@@ -18,12 +19,16 @@ class SpecialMixerComponent(MixerComponent):
         self._jog_wheel = jog_wheel
         self.delete_button = None
         self._is_scene_mode = False
+        self._is_alt_mode = False
 
     def tracks_to_use(self):
         return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
 
     def _create_strip(self):
         return SpecialChannelStripComponent()
+
+    def set_scene_mode(self, value):
+        self._is_scene_mode = value
 
     def alt_binding(self):
         self.set_select_buttons(self.track_right, self.track_left)
@@ -40,10 +45,8 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_invert_mute_feedback(True)
         if self._jog_wheel is not None:
             self._jog_wheel.add_value_listener(self._master_control)
+        self._is_alt_mode = True
         self.update()
-
-    def set_scene_mode(self, value):
-        self._is_scene_mode = value
 
     def _master_control(self, value):
         if value == 0:
@@ -66,13 +69,30 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_invert_mute_feedback(True)
         if self._jog_wheel is not None:
             self._jog_wheel.remove_value_listener(self._master_control)
+        self._is_alt_mode = False
         self.update_all()
 
     def setup_track_deletion(self):
-        for button in range(self.num_tracks):
-            self.clip_launch_buttons[4][button].add_value_listener(lambda value, index=button: self._delete_track(index, value))
+        for button in range(self.num_tracks - 1):
+            self.clip_launch_buttons[-1][button].add_value_listener(lambda value, index=button: self._delete_track(index))
+        for button in range(self.num_tracks // 2):
+            Live.Base.log("Setting fader")
+            self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_fader(index, 0))
+            self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_fader(index + 8, 0))
         self.update()
 
-    def _delete_track(self, index, value):
-        if self.delete_button.is_pressed() and self.:
+    def _delete_track(self, index):
+        if self.delete_button.is_pressed() and self._is_scene_mode:
             self.song().delete_track(index)
+
+    def _reset_fader(self, index, type):
+        """
+        type 0 = Volume
+        """
+        if not self.delete_button.is_pressed():
+            return
+        Live.Base.log("Resetting fader " + str(index))
+        if type == 0:
+            if index > 7 and not self._is_alt_mode:
+                return
+            self.song().visible_tracks[index].mixer_device.volume.value = 0.85

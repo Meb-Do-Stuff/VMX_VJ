@@ -1,21 +1,20 @@
 from __future__ import with_statement
-import Live
+# import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import *
 from _Framework.SliderElement import SliderElement
 from _Framework.ButtonElement import ButtonElement
-from _Framework.ButtonMatrixElement import ButtonMatrixElement
-from _Framework.ChannelStripComponent import ChannelStripComponent
+# from _Framework.ButtonMatrixElement import ButtonMatrixElement
+# from _Framework.ChannelStripComponent import ChannelStripComponent
 from _Framework.DeviceComponent import DeviceComponent
-from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
-from _Framework.SessionZoomingComponent import SessionZoomingComponent
+# from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
+# from _Framework.SessionZoomingComponent import SessionZoomingComponent
 from .SpecialMixerComponent import SpecialMixerComponent
 from .SpecialTransportComponent import SpecialTransportComponent
 from .SpecialSessionComponent import SpecialSessionComponent
 from .SpecialZoomingComponent import SpecialZoomingComponent
 from .SpecialViewControllerComponent import DetailViewControllerComponent
 from .MIDI_Map import *
-
 
 # MIDI_NOTE_TYPE = 0
 # MIDI_CC_TYPE = 1
@@ -105,7 +104,6 @@ class VMX_V64(ControlSurface):
         self._mixer.send_a = [self._ctrl_map[TRACKSENDA[index]] for index in range(TSB_X)]
         self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
         self._mixer.delete_button = self._note_map[DELETE]
-        self._mixer.setup_track_deletion()
 
     def _setup_session_control(self):
         self.session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer, self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
@@ -139,6 +137,7 @@ class VMX_V64(ControlSurface):
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
                                            self._note_map[ZOOMRIGHT])
         self._mixer.unbind_alt()
+        self._mixer.setup_track_deletion()
 
     def _setup_device_and_transport_control(self):
         self._device = DeviceComponent()
