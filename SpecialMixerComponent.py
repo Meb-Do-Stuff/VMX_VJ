@@ -40,8 +40,8 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_solo_button(self.clip_launch_buttons[2][track])
             strip.set_arm_button(self.clip_launch_buttons[3][track])
             strip.set_volume_control(([None] * 8 + self.volumes_faders)[track])
-            strip.set_pan_control(self.send_a[track])
-            strip.set_send_controls((None, None, self.send_b[track]))
+            strip.set_pan_control(self.send_b[track])
+            strip.set_send_controls((None, None, self.send_a[track]))
             strip.set_invert_mute_feedback(True)
         if self._jog_wheel is not None:
             self._jog_wheel.add_value_listener(self._master_control)
@@ -77,22 +77,45 @@ class SpecialMixerComponent(MixerComponent):
             self.clip_launch_buttons[-1][button].add_value_listener(lambda value, index=button: self._delete_track(index))
         for button in range(self.num_tracks // 2):
             Live.Base.log("Setting fader")
-            self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_fader(index, 0))
-            self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_fader(index + 8, 0))
+            self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_value(index, 0))
+            self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_value(index + 8, 0))
+            self.send_a[button].add_value_listener(lambda value, index=button: self._reset_value(index, 1))
+            self.send_b[button].add_value_listener(lambda value, index=button: self._reset_value(index, 2))
+            self._jog_wheel.add_value_listener(lambda value, index=button: self._reset_value(index, 3))
         self.update()
 
     def _delete_track(self, index):
         if self.delete_button.is_pressed() and self._is_scene_mode:
             self.song().delete_track(index)
 
-    def _reset_fader(self, index, type):
+    def _reset_value(self, index, setting_type):
         """
         type 0 = Volume
+        type 1 = Send A & C
+        type 2 = Send B & Pan
+        type 3 = Master Volume
         """
         if not self.delete_button.is_pressed():
             return
-        Live.Base.log("Resetting fader " + str(index))
-        if type == 0:
-            if index > 7 and not self._is_alt_mode:
+        tracks = self.song().tracks + self.song().return_tracks
+        if setting_type == 0:
+            if (index > 7 and not self._is_alt_mode) or len(tracks) <= index + self._track_offset:
                 return
-            self.song().visible_tracks[index].mixer_device.volume.value = 0.85
+            tracks[index + self._track_offset].mixer_device.volume.value = 0.85
+        if setting_type == 1:
+            if len(tracks) <= index + self._track_offset:
+                return
+            if not self._is_alt_mode and len(tracks[index + self._track_offset].mixer_device.sends) > 0:
+                tracks[index + self._track_offset].mixer_device.sends[0].value = 0
+            elif len(tracks[index + self._track_offset].mixer_device.sends) > 2:
+                tracks[index + self._track_offset].mixer_device.sends[2].value = 0
+        if setting_type == 2:
+            if len(tracks) <= index + self._track_offset:
+                return
+            if not self._is_alt_mode and len(tracks[index + self._track_offset].mixer_device.sends) > 1:
+                tracks[index + self._track_offset].mixer_device.sends[1].value = 0
+            else:
+                tracks[index + self._track_offset].mixer_device.panning.value = 0
+        if setting_type == 3:
+            if self._is_alt_mode:
+                self.song().master_track.mixer_device.volume.value = 0.85

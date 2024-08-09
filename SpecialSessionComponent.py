@@ -125,7 +125,7 @@ class SpecialSessionComponent(SessionComponent):
             self._mixer.set_scene_mode(False)
 
     def _engage_alt(self, value):
-        if value == 127 and not self._alt1_igniter.is_pressed() and not self.delete_button.is_pressed():  # Alt enabled
+        if value == 127 and not self._alt1_igniter.is_pressed() and not self.delete_button.is_pressed():
             self.set_track_bank_buttons(None, None)
             self.set_scene_bank_buttons(None, None)
             self.set_select_buttons(self.session_down, self.session_up)
@@ -133,7 +133,7 @@ class SpecialSessionComponent(SessionComponent):
             self._mixer.alt_binding()
             self._transport.unbind_jog_wheel()
             self.set_slot_launch_button()
-        elif value == 0:  # Alt disabled
+        elif value == 0:
             self.view_setup()
             self.setup_clip_launch()
             self._mixer.unbind_alt()
