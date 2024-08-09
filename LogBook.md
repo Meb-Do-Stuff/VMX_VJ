@@ -46,10 +46,17 @@ It's now time to find buttons and everything.
 
 I managed to set that the 16x4 buttons can launch clip, and the 16x2 knobs can managed the Send A & B, and faders manage volume.<br>
 The jog can now manage time.<br>
+I can now move the view with buttons 65 and 66 for up and down, 67 and 68 for left and right.<br>
+Play, Stop, Stop Clips and Record with 80, 79, 78 and 77.<br>
 
-## Step 3: Advanced MIDI
+## Step 3: Advanced Functions
 
-Working on a menu system so you can do anything with it.
+I managed to create an ALT button, that changes the 1 row of buttons to manage the selection of tracks.<br>
+The second row of buttons can now manage the mute, 3rd solo and 4th arm of the selected track.<br>
+The 16x2 knobs manage send C and pan in ALT mode.<br>
+The 8 faders manages the 8 other volume tracks in ALT mdoe (since this device should manage 16 tracks).<br>
+The jog manage the master volume in ALT mode.<br>
+The view buttons now manage the clip selection in ALT mode, and play button (80) launch the currently selected clip in ALT mode.<br>
 
 ---
 

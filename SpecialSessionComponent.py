@@ -1,6 +1,7 @@
 from _Framework.SessionComponent import SessionComponent
 from _Framework.ButtonElement import ButtonElement
 from math import sqrt
+import Live
 
 
 class SpecialSessionComponent(SessionComponent):
@@ -89,7 +90,6 @@ class SpecialSessionComponent(SessionComponent):
 
     def _slot_launch_value(self, value):
         assert (value in range(128))
-        assert (self.slot_launch_button is not None)
         if self.is_enabled():
             if (value != 0) or (not self.slot_launch_button.is_momentary()):
                 if self.song().view.highlighted_clip_slot is not None:
@@ -142,11 +142,37 @@ class SpecialSessionComponent(SessionComponent):
 
     def deletion_manager(self):
         self.delete_button.add_value_listener(self._deletion)
+        self.session_up.add_value_listener(lambda value: self._reset_value(0))
+        self.session_down.add_value_listener(lambda value: self._reset_value(0))
+        self.session_left.add_value_listener(lambda value: self._reset_value(1))
+        self.session_right.add_value_listener(lambda value: self._reset_value(1))
+
         self.setup_clip_delete()
         self.update()
 
     def _deletion(self, value):
         if value == 127 and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed():
             self.unbind_clip_launch()
+            self._transport.unbind_play_button()
+            Live.Base.log("delete")
         if value == 0:
             self.setup_clip_launch()
+            self._transport.setup_play_button()
+            Live.Base.log("Undelete")
+
+    def _reset_value(self, setting_type):
+        """
+        type 0 = View Up & Down
+        type 1 = View Left & Right
+        """
+        if not self.delete_button.is_pressed():
+            return
+        if self._alt0_igniter.is_pressed():
+            if setting_type == 0:
+                self.song().view.selected_scene = self.song().scenes[0]
+            elif setting_type == 1:
+                self.song().view.selected_track = self.song().tracks[0]
+        if setting_type == 0:
+            self.set_offsets(self.track_offset(), 0)
+        elif setting_type == 1:
+            self.set_offsets(0, self.scene_offset())

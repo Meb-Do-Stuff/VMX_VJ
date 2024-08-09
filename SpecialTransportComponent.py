@@ -18,17 +18,15 @@ class SpecialTransportComponent(TransportComponent):
 
     def __init__(self):
         TransportComponent.__init__(self)
-        #self._shift_button = None
         self._quant_toggle_button = None
-        #self._shift_pressed = False
         self._last_quant_value = Live.Song.RecordingQuantization.rec_q_eight
         self.song().add_midi_recording_quantization_listener(self._on_quantisation_changed)
         self._on_quantisation_changed()
-        self._undo_button = None  #added from OpenLabs SpecialTransportComponent script
-        self._redo_button = None  #added from OpenLabs SpecialTransportComponent script
-        #self._bts_button = None #added from OpenLabs SpecialTransportComponent script
-        self._tempo_encoder_control = None  #new addition
+        self._undo_button = None
+        self._redo_button = None
+        self._tempo_encoder_control = None
         self.time_button = None
+        self.play_button = None
 
     def disconnect(self):
         TransportComponent.disconnect(self)
@@ -181,3 +179,11 @@ class SpecialTransportComponent(TransportComponent):
         if self.is_enabled():
             fraction = ((TEMPO_TOP - TEMPO_BOTTOM) / 127.0)
             self.song().tempo = ((fraction * value) + TEMPO_BOTTOM)
+
+    def setup_play_button(self):
+        Live.Base.log("Setup button")
+        self.set_play_button(self.play_button)
+
+    def unbind_play_button(self):
+        Live.Base.log("Unsetup")
+        self.set_play_button(None)

@@ -65,7 +65,7 @@ SELSCENELAUNCH = -1  # Selected scene launch
 SCENELAUNCH = tuple([-1] * 4)  # Scene launch buttons
 
 # Clip Launch / Stop
-SELCLIPLAUNCH = 70  # Selected clip launch
+SELCLIPLAUNCH = 80  # Selected clip launch
 STOPALLCLIPS = 78  # Stop all clips
 
 # 8x8 Matrix note assignments
@@ -83,13 +83,9 @@ SELTRACKSOLO = -1  # Solo Selected Track
 SELTRACKMUTE = -1  # Mute Selected Track
 
 TRACKSTOP = tuple([-1] * 16)  # Track stop buttons
-
 TRACKSEL = tuple([-1] * 16)  # Track select buttons
-
 TRACKMUTE = tuple([-1] * 16)  # Track mute buttons
-
 TRACKSOLO = tuple([-1] * 16)  # Track solo buttons
-
 TRACKREC = tuple([-1] * 16)  # Track record arm buttons
 
 # Pad Translations for Drum Rack

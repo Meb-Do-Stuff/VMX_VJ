@@ -164,7 +164,8 @@ class VMX_V64(ControlSurface):
 
         self._transport = SpecialTransportComponent()
         self._transport.name = 'Transport'
-        self._transport.set_play_button(self._note_map[PLAY])
+        self._transport.play_button = self._note_map[PLAY]
+        self._transport.setup_play_button()
         self._transport.set_stop_button(self._note_map[STOP])
         self._transport.set_record_button(self._note_map[REC])
         self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])

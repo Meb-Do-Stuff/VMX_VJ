@@ -76,7 +76,6 @@ class SpecialMixerComponent(MixerComponent):
         for button in range(self.num_tracks - 1):
             self.clip_launch_buttons[-1][button].add_value_listener(lambda value, index=button: self._delete_track(index))
         for button in range(self.num_tracks // 2):
-            Live.Base.log("Setting fader")
             self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_value(index, 0))
             self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_value(index + 8, 0))
             self.send_a[button].add_value_listener(lambda value, index=button: self._reset_value(index, 1))
@@ -102,20 +101,20 @@ class SpecialMixerComponent(MixerComponent):
             if (index > 7 and not self._is_alt_mode) or len(tracks) <= index + self._track_offset:
                 return
             tracks[index + self._track_offset].mixer_device.volume.value = 0.85
-        if setting_type == 1:
+        elif setting_type == 1:
             if len(tracks) <= index + self._track_offset:
                 return
             if not self._is_alt_mode and len(tracks[index + self._track_offset].mixer_device.sends) > 0:
                 tracks[index + self._track_offset].mixer_device.sends[0].value = 0
             elif len(tracks[index + self._track_offset].mixer_device.sends) > 2:
                 tracks[index + self._track_offset].mixer_device.sends[2].value = 0
-        if setting_type == 2:
+        elif setting_type == 2:
             if len(tracks) <= index + self._track_offset:
                 return
             if not self._is_alt_mode and len(tracks[index + self._track_offset].mixer_device.sends) > 1:
                 tracks[index + self._track_offset].mixer_device.sends[1].value = 0
             else:
                 tracks[index + self._track_offset].mixer_device.panning.value = 0
-        if setting_type == 3:
+        elif setting_type == 3:
             if self._is_alt_mode:
                 self.song().master_track.mixer_device.volume.value = 0.85
