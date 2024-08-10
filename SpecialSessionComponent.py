@@ -133,12 +133,14 @@ class SpecialSessionComponent(SessionComponent):
             self._mixer.alt_binding()
             self._transport.unbind_jog_wheel()
             self.set_slot_launch_button()
+            self._transport.unbind_play_button()
         elif value == 0:
             self.view_setup()
             self.setup_clip_launch()
             self._mixer.unbind_alt()
             self._transport.set_jog_wheel_time()
             self.unset_slot_launch_button()
+            self._transport.setup_play_button()
 
     def deletion_manager(self):
         self.delete_button.add_value_listener(self._deletion)
@@ -153,12 +155,8 @@ class SpecialSessionComponent(SessionComponent):
     def _deletion(self, value):
         if value == 127 and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed():
             self.unbind_clip_launch()
-            self._transport.unbind_play_button()
-            Live.Base.log("delete")
         if value == 0:
             self.setup_clip_launch()
-            self._transport.setup_play_button()
-            Live.Base.log("Undelete")
 
     def _reset_value(self, setting_type):
         """

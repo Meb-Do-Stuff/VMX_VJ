@@ -27,6 +27,7 @@ class VMX_V64(ControlSurface):
     _active_instances = []
 
     def _combine_active_instances():
+        """ Static method to set up new instances of the device """
         track_offset = 0
         scene_offset = 0
         for instance in VMX_V64._active_instances:
@@ -36,39 +37,42 @@ class VMX_V64(ControlSurface):
     _combine_active_instances = staticmethod(_combine_active_instances)
 
     def __init__(self, c_instance):
+        """ Initialize the VMX V64 script """
         ControlSurface.__init__(self, c_instance)
         # self.set_suppress_rebuild_requests(True)
         with self.component_guard():
-            self._note_map = []
-            self._ctrl_map = []
-            self._menu_map = []
-            self._load_MIDI_map()
-            self._jog_wheel = None
-            self._load_jog_wheel()
-            self.session = None
+            self._note_map = []  # Prepare CC note (buttons) map
+            self._ctrl_map = []  # Prepare CC control (faders) map
+            self._menu_map = []  # Prepare menu map (the 8 buttons on the bottom part)
+            self._jog_wheel = None  # Prepare the jog as a button (because it's either 127 in one direction or 0 in the other (so like a button))
             self._session_zoom = None
             self._mixer = None
             self._transport = None
+            self.session = None
+            self._load_MIDI_map()
             self._setup_mixer_control()
             self._setup_device_and_transport_control()
-            self._setup_session_control()
+            self._setup_session_control()  # Set up the session control. The order of execution is important!
             self.set_highlighting_session_component(self.session)
             # self.set_suppress_rebuild_requests(False)
-        self._pads = []
+        self._pads = []  # Drum pads (future use?)
         self._load_pad_translations()
         self._do_combine()
 
     def disconnect(self):
+        """
+        Reset when the device is disconnected
+        """
         self._note_map = None
         self._ctrl_map = None
         self._menu_map = None
         self._jog_wheel = None
-        self._pads = None
         self._do_uncombine()
-        self.session = None
         self._session_zoom = None
         self._mixer = None
         self._transport = None
+        self.session = None
+        self._pads = None
         ControlSurface.disconnect(self)
 
     def _do_combine(self):
@@ -89,7 +93,10 @@ class VMX_V64(ControlSurface):
         self.session.link_with_track_offset(track_offset, scene_offset)
 
     def _setup_mixer_control(self):
-        self._mixer = SpecialMixerComponent(TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT], self._jog_wheel)
+        """
+        Setup settings related to SpecialMixerComponent
+        """
+        self._mixer = SpecialMixerComponent(TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT], self._jog_wheel)  # Initialize the component (extended from _Framework.MixerComponent)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
@@ -113,17 +120,15 @@ class VMX_V64(ControlSurface):
         self.session.session_left = self._note_map[SESSIONLEFT]
         self.session.session_right = self._note_map[SESSIONRIGHT]
         self.session.view_setup()
-        # range(tsb_x) Range value is the track selection
-        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]
-        # range(tsb_y) is the horizontal count for the track selection box
-        self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in range(TSB_Y)]
+        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]  # range(tsb_x) Range value is the track selection
+        self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in range(TSB_Y)]  # range(tsb_y) is the horizontal count for the track selection box
         self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
         self.session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
         self.session.selected_scene().name = 'Selected_Scene'
         self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
         self.session.delete_button = self._note_map[DELETE]
-        for scene_index in range(TSB_Y):
+        for scene_index in range(TSB_Y):  # Setting up buttons for the 16x4 button matrix
             button_row = []
             for track_index in range(TSB_X):
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
@@ -226,6 +231,5 @@ class VMX_V64(ControlSurface):
         for note in MENUBUTTONS:
             self._menu_map.append(self._note_map[note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
 
-    def _load_jog_wheel(self):
         self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 0, 125)
         self._jog_wheel.name = 'Jog_Wheel'

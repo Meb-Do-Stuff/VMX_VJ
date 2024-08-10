@@ -1,14 +1,8 @@
-# There are lot of things to explore that you can use to add extra functionality to your scipt.
-# You'd essentially enable it here by uncommenting then add it VMX_V64.py and MIDI_Map.
-# I experiment more and add myself in the future.
-
 import Live
 from _Framework.TransportComponent import TransportComponent
 from _Framework.ButtonElement import ButtonElement
-from _Framework.EncoderElement import EncoderElement  #added
-from _Framework.SubjectSlot import subject_slot  #added
-#TEMPO_TOP = 300.0
-#TEMPO_BOTTOM = 40.0
+from _Framework.EncoderElement import EncoderElement
+from _Framework.SubjectSlot import subject_slot
 from .MIDI_Map import TEMPO_TOP
 from .MIDI_Map import TEMPO_BOTTOM
 
@@ -27,6 +21,8 @@ class SpecialTransportComponent(TransportComponent):
         self._tempo_encoder_control = None
         self.time_button = None
         self.play_button = None
+        # TEMPO_TOP = 300.0
+        # TEMPO_BOTTOM = 40.0
 
     def disconnect(self):
         TransportComponent.disconnect(self)
@@ -104,7 +100,7 @@ class SpecialTransportComponent(TransportComponent):
             quant_on = (quant_value != Live.Song.RecordingQuantization.rec_q_no_q)
             if quant_on:
                 self._last_quant_value = quant_value
-            if self._quant_toggle_button is not None:  #((not self._shift_pressed) and (self._quant_toggle_button != None)):
+            if self._quant_toggle_button is not None:
                 if quant_on:
                     self._quant_toggle_button.turn_on()
                 else:

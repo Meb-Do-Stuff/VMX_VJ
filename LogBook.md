@@ -66,3 +66,5 @@ Moral support:<br>
 [David August's Innervisions #50 LIVE Podcast](https://soundcloud.com/davidaugust/innervisions-50-live-podcast?si=6fd98977e3b647429ca6c9d1a45be392&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)<br>
 [Rimarkable's Boiler Room](https://youtu.be/hoyCaeT_tuo)<br>
 [Four Tet's Boiler Room](https://www.youtube.com/watch?v=Ca6pjR2TLns)<br>
+[Sweet Valley single *So Serene*](https://open.spotify.com/intl-fr/album/3VM5KHTGJAVkbFc1tkDTHG)<br>
+[White Birds *When Women Played Drums*](https://open.spotify.com/intl-fr/album/0pjKENinrmO6cBGplZIEfS)
