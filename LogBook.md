@@ -53,7 +53,7 @@ The first thing to do is to re-adapt this script that was made for an 8x8 contro
 There are matrices of -1, and I'm quite sure that the wrong amount of -1 would generate an error.
 It's now time to find the buttons and everything.
 
-<img src="https://raw.githubusercontent.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/main/Map.png" height="500">
+<img src="https://raw.githubusercontent.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/main/Map.png" height="500" alt="Codanova VMX V64 MIDI Map">
 <br>Outputting is really weird, I'll try again later.
 
 I managed to set the 16x4 buttons to launch clips, and the 16x2 knobs can manage the Send A & B, while the faders manage volume.<br>

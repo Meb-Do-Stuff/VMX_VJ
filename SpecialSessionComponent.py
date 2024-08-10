@@ -1,22 +1,24 @@
 from _Framework.SessionComponent import SessionComponent
 from _Framework.ButtonElement import ButtonElement
+from SpecialMixerComponent import SpecialMixerComponent
+from SpecialTransportComponent import SpecialTransportComponent
+from _Framework.ClipSlotComponent import ClipSlotComponent
 from math import sqrt
-import Live
 
 
 class SpecialSessionComponent(SessionComponent):
     """ Special SessionComponent for VMX V64 combination mode and button to fire selected clip slot, as well as an alt system """
     __module__ = __name__
 
-    def __init__(self, num_tracks, num_scenes, buttons, mixer, transport):
+    def __init__(self, num_tracks: int, num_scenes: int, menu_buttons: [ButtonElement], mixer: SpecialMixerComponent, transport: SpecialTransportComponent):
         SessionComponent.__init__(self, num_tracks, num_scenes)
         self.num_scenes = num_scenes
         self.num_tracks = num_tracks
         self.slot_launch_button = None
-        self._alt0_igniter = buttons[int(sqrt(len(buttons))) * -1]
-        self._alt1_igniter = buttons[int(sqrt(len(buttons))) * -1 + 1]
+        self._alt0_igniter = menu_buttons[int(sqrt(len(menu_buttons))) * -1]
+        self._alt1_igniter = menu_buttons[int(sqrt(len(menu_buttons))) * -1 + 1]
         # self._igniter.is_momentary = False
-        self._buttons = buttons
+        self._menu_buttons = menu_buttons
         self._mixer = mixer
         self._transport = transport
         self.clip_launch_buttons = []
@@ -29,6 +31,9 @@ class SpecialSessionComponent(SessionComponent):
         self.delete_button = None
 
     def setup_clip_launch(self):
+        """
+        Setup the 16x4 matrix of button to launch clips.
+        """
         self.unbind_clip_launch()
         for scene_index in range(self.num_scenes):
             scene = self.scene(scene_index)
@@ -40,6 +45,9 @@ class SpecialSessionComponent(SessionComponent):
                 clip_slot.set_launch_button(self.clip_launch_buttons[scene_index][track_index])
 
     def unbind_clip_launch(self):
+        """
+        Unbind the 16x4 matrix of button to launch clips.
+        """
         for scene_index in range(self.num_scenes):
             scene = self.scene(scene_index)
             for track_index in range(self.num_tracks):
@@ -47,6 +55,9 @@ class SpecialSessionComponent(SessionComponent):
                 clip_slot.set_launch_button(None)
 
     def setup_clip_delete(self):
+        """
+        Setup the 16x4 matrix of button to delete clips.
+        """
         for scene_index in range(self.num_scenes):
             scene = self.scene(scene_index)
             scene.name = 'Scene_' + str(scene_index)
@@ -54,7 +65,10 @@ class SpecialSessionComponent(SessionComponent):
             for track_index in range(self.num_tracks):
                 self.clip_launch_buttons[scene_index][track_index].add_value_listener(lambda value, cs=scene.clip_slot(track_index): self._delete_clip(cs))
 
-    def _delete_clip(self, clip_slot):
+    def _delete_clip(self, clip_slot: ClipSlotComponent):
+        """
+        Delete given clip slot.
+        """
         if not self.delete_button.is_pressed() or self._alt0_igniter.is_pressed() or self._alt1_igniter.is_pressed() or clip_slot._clip_slot is None or not clip_slot._clip_slot.has_clip:
             return
         clip_slot._clip_slot.delete_clip()
@@ -65,7 +79,7 @@ class SpecialSessionComponent(SessionComponent):
             self.slot_launch_button.remove_value_listener(self._slot_launch_value)
             self.slot_launch_button = None
 
-    def link_with_track_offset(self, track_offset, scene_offset):
+    def link_with_track_offset(self, track_offset: int, scene_offset: int):
         assert (track_offset >= 0)
         assert (scene_offset >= 0)
         if self._is_linked():
@@ -78,39 +92,55 @@ class SpecialSessionComponent(SessionComponent):
             self._unlink()
 
     def set_slot_launch_button(self):
+        """
+        Set the button to launch the selected clip slot.
+        """
         assert ((self.slot_launch_button is None) or isinstance(self.slot_launch_button, ButtonElement))
         if self.slot_launch_button is not None:
             self.slot_launch_button.add_value_listener(self._slot_launch_value)
         self.update()
 
     def unset_slot_launch_button(self):
+        """
+        Unset the button to launch the selected clip slot.
+        """
         if self.slot_launch_button is not None:
             self.slot_launch_button.remove_value_listener(self._slot_launch_value)
             self.update()
 
-    def _slot_launch_value(self, value):
+    def _slot_launch_value(self, value: int):
+        """
+        Launch the selected clip slot (value have to be not 0).
+        """
         assert (value in range(128))
-        if self.is_enabled():
-            if (value != 0) or (not self.slot_launch_button.is_momentary()):
-                if self.song().view.highlighted_clip_slot is not None:
-                    self.song().view.highlighted_clip_slot.fire()
+        if self.is_enabled() and value > 0 and self.song().view.highlighted_clip_slot is not None:
+            self.song().view.highlighted_clip_slot.fire()
 
     def _setup_igniter(self):
+        """
+        Setup the alt system, and scene system.
+        """
         assert (self._alt0_igniter is not None)
         self._alt0_igniter.add_value_listener(self._engage_alt)
         assert (self._alt1_igniter is not None)
-        self._alt1_igniter.add_value_listener(self._engage_sceneLaunch)
+        self._alt1_igniter.add_value_listener(self._engage_scene_launch)
         self.update()
 
     def view_setup(self):
+        """
+        Setup the view system.
+        """
         self.set_track_bank_buttons(self.session_right, self.session_left)
         self.set_scene_bank_buttons(self.session_down, self.session_up)
         self.set_select_buttons(None, None)
 
-    def _engage_sceneLaunch(self, value):
+    def _engage_scene_launch(self, value: int):
+        """
+        Engage scene launch system (0 = closed, else = open).
+        """
         if self._alt0_igniter.is_pressed():
             return
-        if value == 127:  # Scene launch mod open
+        if value > 0:  # Scene launch mod open
             self.unbind_clip_launch()
             for scene_index in range(self.num_scenes):
                 scene = self.scene(scene_index)
@@ -119,17 +149,20 @@ class SpecialSessionComponent(SessionComponent):
                 scene.set_triggered_value(2)
                 self.set_stop_track_clip_buttons([self.clip_launch_buttons[-1][track_index] for track_index in range(self.num_tracks - 1)])
             self._mixer.set_scene_mode(True)
-        elif value == 0:
+        else:
             for scene_index in range(self.num_scenes):
                 self.scene(scene_index).set_launch_button(None)
             self.set_stop_track_clip_buttons([])
             self.setup_clip_launch()
             self._mixer.set_scene_mode(False)
 
-    def _engage_alt(self, value):
+    def _engage_alt(self, value: int):
+        """
+        Engage alt system (0 = closed, else = open).
+        """
         if self._alt1_igniter.is_pressed():
             return
-        if value == 127:
+        if value > 0:
             self.set_track_bank_buttons(None, None)
             self.set_scene_bank_buttons(None, None)
             self.set_select_buttons(self.session_down, self.session_up)
@@ -138,7 +171,7 @@ class SpecialSessionComponent(SessionComponent):
             self._transport.unbind_jog_wheel()
             self.set_slot_launch_button()
             self._transport.unbind_play_button()
-        elif value == 0:
+        else:
             self.view_setup()
             self.setup_clip_launch()
             self._mixer.unbind_alt()
@@ -147,22 +180,27 @@ class SpecialSessionComponent(SessionComponent):
             self._transport.setup_play_button()
 
     def deletion_manager(self):
+        """
+        Bind buttons to reset their values when deletion button is pressed.
+        """
         self.delete_button.add_value_listener(self._deletion)
         self.session_up.add_value_listener(lambda value: self._reset_value(0))
         self.session_down.add_value_listener(lambda value: self._reset_value(0))
         self.session_left.add_value_listener(lambda value: self._reset_value(1))
         self.session_right.add_value_listener(lambda value: self._reset_value(1))
-
         self.setup_clip_delete()
         self.update()
 
-    def _deletion(self, value):
-        if value == 127 and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed():
+    def _deletion(self, value: int):
+        """
+        Unbind clip launch when delete button is pressed (so buttons on the grid only have one action).
+        """
+        if value > 0 and not self._alt0_igniter.is_pressed() and not self._alt1_igniter.is_pressed():
             self.unbind_clip_launch()
-        if value == 0:
+        elif value == 0:
             self.setup_clip_launch()
 
-    def _reset_value(self, setting_type):
+    def _reset_value(self, setting_type: int):
         """
         type 0 = View Up & Down
         type 1 = View Left & Right

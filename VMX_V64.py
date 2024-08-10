@@ -97,7 +97,8 @@ class VMX_V64(ControlSurface):
         """
         Setup settings related to SpecialMixerComponent
         """
-        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT], self._jog_wheel)  # Initialize the component (extended from _Framework.MixerComponent)
+        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT],
+                                            self._jog_wheel)  # Initialize the component (extended from _Framework.MixerComponent)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
@@ -114,47 +115,15 @@ class VMX_V64(ControlSurface):
         self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
         self._mixer.delete_button = self._note_map[DELETE]
 
-    def _setup_session_control(self):
-        self.session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer,
-                                               self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
-        self.session.name = 'Session_Control'
-        self.session.session_down = self._note_map[SESSIONDOWN]
-        self.session.session_up = self._note_map[SESSIONUP]
-        self.session.session_left = self._note_map[SESSIONLEFT]
-        self.session.session_right = self._note_map[SESSIONRIGHT]
-        self.session.view_setup()
-        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in
-                                    range(TSB_X)]  # range(tsb_x) Range value is the track selection
-        self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in
-                                      range(TSB_Y)]  # range(tsb_y) is the horizontal count for the track selection box
-        self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
-        self.session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
-        self.session.selected_scene().name = 'Selected_Scene'
-        self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
-        self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
-        self.session.delete_button = self._note_map[DELETE]
-        for scene_index in range(TSB_Y):  # Setting up buttons for the 16x4 button matrix
-            button_row = []
-            for track_index in range(TSB_X):
-                button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
-                button_row.append(button)
-            self.session.clip_launch_buttons.append(button_row)
-            self._mixer.clip_launch_buttons.append(button_row)
-        self.session.setup_clip_launch()
-        self.session.deletion_manager()
-        self._session_zoom = SpecialZoomingComponent(self.session)
-        self._session_zoom.name = 'Session_Overview'
-        self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
-                                           self._note_map[ZOOMRIGHT])
-        self._mixer.unbind_alt()
-        self._mixer.setup_track_deletion()
-
     def _setup_device_and_transport_control(self):
+        """
+        Setup settings related to DeviceComponent and SpecialTransportComponent
+        """
         self._device = DeviceComponent()
         self._device.name = 'Device_Component'
         device_bank_buttons = []
         device_param_controls = []
-        for index in range(8):
+        for index in range(8):  # Bank and parameters setup (unused)
             device_param_controls.append(self._ctrl_map[PARAMCONTROL[index]])
             device_bank_buttons.append(self._note_map[DEVICEBANK[index]])
         if None not in device_bank_buttons:
@@ -192,6 +161,44 @@ class VMX_V64(ControlSurface):
         self._transport.time_button = self._jog_wheel
         self._transport.set_jog_wheel_time()
 
+    def _setup_session_control(self):
+        """
+        Setup settings related to SpecialSessionComponent
+        """
+        self.session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer,
+                                               self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
+        self.session.name = 'Session_Control'
+        self.session.session_down = self._note_map[SESSIONDOWN]
+        self.session.session_up = self._note_map[SESSIONUP]
+        self.session.session_left = self._note_map[SESSIONLEFT]
+        self.session.session_right = self._note_map[SESSIONRIGHT]
+        self.session.view_setup()
+        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in
+                                    range(TSB_X)]  # range(tsb_x) Range value is the track selection
+        self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in
+                                      range(TSB_Y)]  # range(tsb_y) is the horizontal count for the track selection box
+        self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
+        self.session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
+        self.session.selected_scene().name = 'Selected_Scene'
+        self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
+        self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
+        self.session.delete_button = self._note_map[DELETE]
+        for scene_index in range(TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
+            button_row = []
+            for track_index in range(TSB_X):  # (X (vertical / the tracks))
+                button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
+                button_row.append(button)
+            self.session.clip_launch_buttons.append(button_row)
+            self._mixer.clip_launch_buttons.append(button_row)
+        self.session.setup_clip_launch()
+        self.session.deletion_manager()
+        self._session_zoom = SpecialZoomingComponent(self.session)
+        self._session_zoom.name = 'Session_Overview'
+        self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
+                                           self._note_map[ZOOMRIGHT])
+        self._mixer.unbind_alt()
+        self._mixer.setup_track_deletion()
+
     def _on_selected_track_changed(self):
         ControlSurface._on_selected_track_changed(self)
         track = self.song().view.selected_track
@@ -211,8 +218,11 @@ class VMX_V64(ControlSurface):
             self.set_pad_translations(tuple(self._pads))
 
     def _load_MIDI_map(self):
+        """
+        Load MIDI map.
+        """
         for note in range(128):
-            if note <= 64:
+            if note <= 64:  # The 16x4 matrix is toggle until I found out how to have it in push mode.
                 is_momentary = False
             else:
                 is_momentary = True
@@ -220,7 +230,7 @@ class VMX_V64(ControlSurface):
             button.name = 'Note_' + str(note)
             self._note_map.append(button)
 
-        self._note_map.append(None)  # add None to the end of the list, selectable with [-1]
+        self._note_map.append(None)  # Add None to the end of the list, selectable with [-1] (for un-attributed)
         if MESSAGETYPE == MIDI_CC_TYPE and BUTTONCHANNEL == SLIDERCHANNEL:
             for ctrl in range(128):
                 self._ctrl_map.append(None)
@@ -232,8 +242,7 @@ class VMX_V64(ControlSurface):
             self._ctrl_map.append(None)
 
         for note in MENUBUTTONS:
-            self._menu_map.append(self._note_map[
-                                      note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
+            self._menu_map.append(self._note_map[note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
 
         self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 0, 125)
         self._jog_wheel.name = 'Jog_Wheel'

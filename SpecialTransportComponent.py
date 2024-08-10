@@ -43,10 +43,10 @@ class SpecialTransportComponent(TransportComponent):
             self.time_button.remove_value_listener(self._time_value)
             self.time_button = None
 
-    def set_quant_toggle_button(self, button):
-        if not (button is None or isinstance(button, ButtonElement) and button.is_momentary()):
-            isinstance(button, ButtonElement)
-            raise AssertionError
+    def set_quant_toggle_button(self, button: ButtonElement):
+        """
+        Set the button to toggle the recording quantization
+        """
         if self._quant_toggle_button != button:
             if self._quant_toggle_button is not None:
                 self._quant_toggle_button.remove_value_listener(self._quant_toggle_value)
@@ -81,7 +81,11 @@ class SpecialTransportComponent(TransportComponent):
         if self.time_button is not None:
             self.time_button.remove_value_listener(self._time_value)
 
-    def _quant_toggle_value(self, value):
+    def _quant_toggle_value(self, value: int):
+        """
+        Toggle the recording quantization.
+        Enable with value > 0, disable with value = 0.
+        """
         assert (self._quant_toggle_button is not None)
         assert (value in range(128))
         assert (self._last_quant_value != Live.Song.RecordingQuantization.rec_q_no_q)
@@ -95,6 +99,9 @@ class SpecialTransportComponent(TransportComponent):
                     self.song().midi_recording_quantization = self._last_quant_value
 
     def _on_quantisation_changed(self):
+        """
+        Update the quantisation button.
+        """
         if self.is_enabled():
             quant_value = self.song().midi_recording_quantization
             quant_on = (quant_value != Live.Song.RecordingQuantization.rec_q_no_q)
@@ -106,11 +113,11 @@ class SpecialTransportComponent(TransportComponent):
                 else:
                     self._quant_toggle_button.turn_off()
 
-    """ from OpenLabs module SpecialTransportComponent """
-
-    def set_undo_button(self, undo_button):
-        assert isinstance(undo_button, (ButtonElement,
-                                        type(None)))
+    def set_undo_button(self, undo_button: ButtonElement):
+        """
+        Set the button to undo the last action.
+        """
+        assert isinstance(undo_button, (ButtonElement, type(None)))
         if undo_button != self._undo_button:
             if self._undo_button is not None:
                 self._undo_button.remove_value_listener(self._undo_value)
@@ -119,9 +126,22 @@ class SpecialTransportComponent(TransportComponent):
                 self._undo_button.add_value_listener(self._undo_value)
             self.update()
 
+    def _undo_value(self, value: int):
+        """
+        Undo the last action.
+        """
+        assert (self._undo_button is not None)
+        assert (value in range(128))
+        if self.is_enabled():
+            if (value != 0) or (not self._undo_button.is_momentary()):
+                if self.song().can_undo:
+                    self.song().undo()
+
     def set_redo_button(self, redo_button):
-        assert isinstance(redo_button, (ButtonElement,
-                                        type(None)))
+        """
+        Set the button to redo the last action.
+        """
+        assert isinstance(redo_button, (ButtonElement, type(None)))
         if redo_button != self._redo_button:
             if self._redo_button is not None:
                 self._redo_button.remove_value_listener(self._redo_value)
@@ -130,15 +150,10 @@ class SpecialTransportComponent(TransportComponent):
                 self._redo_button.add_value_listener(self._redo_value)
             self.update()
 
-    def _undo_value(self, value):
-        assert (self._undo_button is not None)
-        assert (value in range(128))
-        if self.is_enabled():
-            if (value != 0) or (not self._undo_button.is_momentary()):
-                if self.song().can_undo:
-                    self.song().undo()
-
-    def _redo_value(self, value):
+    def _redo_value(self, value: int):
+        """
+        Redo the last action.
+        """
         assert (self._redo_button is not None)
         assert (value in range(128))
         if self.is_enabled():
@@ -146,7 +161,10 @@ class SpecialTransportComponent(TransportComponent):
                 if self.song().can_redo:
                     self.song().redo()
 
-    def _tempo_encoder_value(self, value):
+    def _tempo_encoder_value(self, value: int):
+        """
+        Change the tempo with the encoder.
+        """
         assert (self._tempo_encoder_control is not None)
         assert (value in range(128))
         backwards = (value >= 64)
@@ -177,7 +195,13 @@ class SpecialTransportComponent(TransportComponent):
             self.song().tempo = ((fraction * value) + TEMPO_BOTTOM)
 
     def setup_play_button(self):
+        """
+        Bind play button to play the song.
+        """
         self.set_play_button(self.play_button)
 
     def unbind_play_button(self):
+        """
+        Unbind play button from playing the song.
+        """
         self.set_play_button(None)
