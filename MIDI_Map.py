@@ -106,8 +106,8 @@ TEMPO_BOTTOM = 100.0  # Lower limit of tempo control in BPM (min is 0)
 
 TEMPOCONTROL = -1  # Tempo control CC assignment; control range is set above
 MASTERVOLUME = -1  # Master track volume
-CUELEVEL = -1  # Cue level control
-CROSSFADER = -1  # Crossfader control
+CUELEVEL = 117  # Cue level control
+CROSSFADER1 = 122  # Crossfader control
 
 TRACKVOL = (118,  # Track 1 Volume
             119,  # Track 2

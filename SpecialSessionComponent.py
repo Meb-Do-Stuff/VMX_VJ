@@ -108,7 +108,9 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
-        if value == 127 and not self._alt0_igniter.is_pressed():  # Scene launch mod open
+        if self._alt0_igniter.is_pressed() or self._mixer.crossfader_binding_button.is_pressed():
+            return
+        if value == 127:  # Scene launch mod open
             self.unbind_clip_launch()
             for scene_index in range(self.num_scenes):
                 scene = self.scene(scene_index)
@@ -125,7 +127,9 @@ class SpecialSessionComponent(SessionComponent):
             self._mixer.set_scene_mode(False)
 
     def _engage_alt(self, value):
-        if value == 127 and not self._alt1_igniter.is_pressed() and not self.delete_button.is_pressed():
+        if self._mixer.crossfader_binding_button.is_pressed() or self._alt1_igniter.is_pressed():
+            return
+        if value == 127:
             self.set_track_bank_buttons(None, None)
             self.set_scene_bank_buttons(None, None)
             self.set_select_buttons(self.session_down, self.session_up)

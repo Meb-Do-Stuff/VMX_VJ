@@ -1,14 +1,15 @@
-import Live
 from _Framework.MixerComponent import MixerComponent
 from .SpecialChannelStripComponent import SpecialChannelStripComponent
+import Live
 
 
 class SpecialMixerComponent(MixerComponent):
     """ Special mixer class that uses return tracks alongside midi and audio tracks """
     __module__ = __name__
 
-    def __init__(self, num_tracks, track_left, track_right, jog_wheel):
+    def __init__(self, num_scenes, num_tracks, track_left, track_right, jog_wheel):
         MixerComponent.__init__(self, num_tracks)
+        self.num_scenes = num_scenes
         self.num_tracks = num_tracks
         self.volumes_faders = []
         self.send_a = []
@@ -17,7 +18,11 @@ class SpecialMixerComponent(MixerComponent):
         self.track_right = track_right
         self.clip_launch_buttons = []
         self._jog_wheel = jog_wheel
+        self._crossfader = None
         self.delete_button = None
+        self._prehear_fader = None
+        self.crossfader_binding_button = None
+        self.session = None
         self._is_scene_mode = False
         self._is_alt_mode = False
 
@@ -54,6 +59,30 @@ class SpecialMixerComponent(MixerComponent):
         else:
             self.song().master_track.mixer_device.volume.value += 0.01
 
+    def prepare_crossfader_control(self, crossfader):
+        self._crossfader = crossfader
+        self.set_crossfader_control(self._crossfader)
+
+    def prepare_prehear_volume_control(self, prehear_volume):
+        self._prehear_fader = prehear_volume
+        self.set_prehear_volume_control(self._prehear_fader)
+
+    def setup_crossfader_binding_button(self, button):
+        self.crossfader_binding_button = button
+        self.crossfader_binding_button.add_value_listener(self._engage_crossfader_binding)
+
+    def _engage_crossfader_binding(self, value):
+        if self._is_scene_mode or self._is_alt_mode:
+            return
+        if value == 127:
+            self.session.unbind_clip_launch()
+            for scene_index in range(self.num_scenes % 2):
+                scene = self.scene(scene_index)
+                for track_index in range(self.num_tracks):
+                    Live.Base.log((self.song().tracks + self.song().return_tracks)[track_index].mixer_device.crossfade_assign)
+        elif value == 0:
+            self.session.setup_clip_launch()
+
     def unbind_alt(self):
         self.set_select_buttons(None, None)
         for track in range(self.num_tracks):
@@ -81,6 +110,8 @@ class SpecialMixerComponent(MixerComponent):
             self.send_a[button].add_value_listener(lambda value, index=button: self._reset_value(index, 1))
             self.send_b[button].add_value_listener(lambda value, index=button: self._reset_value(index, 2))
             self._jog_wheel.add_value_listener(lambda value, index=button: self._reset_value(index, 3))
+        self._crossfader.add_value_listener(lambda value: self._reset_value(0, 4))
+        self._prehear_fader.add_value_listener(lambda value: self._reset_value(0, 5))
         self.update()
 
     def _delete_track(self, index):
@@ -93,6 +124,8 @@ class SpecialMixerComponent(MixerComponent):
         type 1 = Send A & C
         type 2 = Send B & Pan
         type 3 = Master Volume
+        type 4 = Crossfader
+        type 5 = Prehear
         """
         if not self.delete_button.is_pressed():
             return
@@ -118,3 +151,7 @@ class SpecialMixerComponent(MixerComponent):
         elif setting_type == 3:
             if self._is_alt_mode:
                 self.song().master_track.mixer_device.volume.value = 0.85
+        elif setting_type == 4:
+            self.song().master_track.mixer_device.crossfader.value = 0
+        elif setting_type == 5:
+            self.song().master_track.mixer_device.cue_volume.value = 0.85
