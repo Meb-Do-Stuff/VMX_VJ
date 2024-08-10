@@ -1,5 +1,5 @@
 from __future__ import with_statement
-import Live
+# import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import *
 from _Framework.SliderElement import SliderElement

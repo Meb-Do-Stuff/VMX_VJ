@@ -1,7 +1,5 @@
 from _Framework.SessionComponent import SessionComponent
 from _Framework.ButtonElement import ButtonElement
-from SpecialMixerComponent import SpecialMixerComponent
-from SpecialTransportComponent import SpecialTransportComponent
 from _Framework.ClipSlotComponent import ClipSlotComponent
 from math import sqrt
 
@@ -10,7 +8,7 @@ class SpecialSessionComponent(SessionComponent):
     """ Special SessionComponent for VMX V64 combination mode and button to fire selected clip slot, as well as an alt system """
     __module__ = __name__
 
-    def __init__(self, num_tracks: int, num_scenes: int, menu_buttons: [ButtonElement], mixer: SpecialMixerComponent, transport: SpecialTransportComponent):
+    def __init__(self, num_tracks: int, num_scenes: int, menu_buttons: [ButtonElement], mixer, transport):
         SessionComponent.__init__(self, num_tracks, num_scenes)
         self.num_scenes = num_scenes
         self.num_tracks = num_tracks
