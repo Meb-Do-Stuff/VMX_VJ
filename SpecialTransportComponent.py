@@ -177,9 +177,7 @@ class SpecialTransportComponent(TransportComponent):
             self.song().tempo = ((fraction * value) + TEMPO_BOTTOM)
 
     def setup_play_button(self):
-        Live.Base.log("Setup button")
         self.set_play_button(self.play_button)
 
     def unbind_play_button(self):
-        Live.Base.log("Unsetup")
         self.set_play_button(None)

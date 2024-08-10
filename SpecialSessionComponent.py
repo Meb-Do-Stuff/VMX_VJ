@@ -108,7 +108,7 @@ class SpecialSessionComponent(SessionComponent):
         self.set_select_buttons(None, None)
 
     def _engage_sceneLaunch(self, value):
-        if self._alt0_igniter.is_pressed() or self._mixer.crossfader_binding_button.is_pressed():
+        if self._alt0_igniter.is_pressed():
             return
         if value == 127:  # Scene launch mod open
             self.unbind_clip_launch()
@@ -127,7 +127,7 @@ class SpecialSessionComponent(SessionComponent):
             self._mixer.set_scene_mode(False)
 
     def _engage_alt(self, value):
-        if self._mixer.crossfader_binding_button.is_pressed() or self._alt1_igniter.is_pressed():
+        if self._alt1_igniter.is_pressed():
             return
         if value == 127:
             self.set_track_bank_buttons(None, None)
@@ -174,7 +174,8 @@ class SpecialSessionComponent(SessionComponent):
                 self.song().view.selected_scene = self.song().scenes[0]
             elif setting_type == 1:
                 self.song().view.selected_track = self.song().tracks[0]
-        if setting_type == 0:
-            self.set_offsets(self.track_offset(), 0)
-        elif setting_type == 1:
-            self.set_offsets(0, self.scene_offset())
+        else:
+            if setting_type == 0:
+                self.set_offsets(self.track_offset(), 0)
+            elif setting_type == 1:
+                self.set_offsets(0, self.scene_offset())

@@ -21,8 +21,6 @@ class SpecialMixerComponent(MixerComponent):
         self._crossfader = None
         self.delete_button = None
         self._prehear_fader = None
-        self.crossfader_binding_button = None
-        self.session = None
         self._is_scene_mode = False
         self._is_alt_mode = False
 
@@ -34,6 +32,7 @@ class SpecialMixerComponent(MixerComponent):
 
     def set_scene_mode(self, value):
         self._is_scene_mode = value
+        self.engage_crossfader_binding()
 
     def alt_binding(self):
         self.set_select_buttons(self.track_right, self.track_left)
@@ -67,21 +66,14 @@ class SpecialMixerComponent(MixerComponent):
         self._prehear_fader = prehear_volume
         self.set_prehear_volume_control(self._prehear_fader)
 
-    def setup_crossfader_binding_button(self, button):
-        self.crossfader_binding_button = button
-        self.crossfader_binding_button.add_value_listener(self._engage_crossfader_binding)
+    def engage_crossfader_binding(self):
+        tracks = self.song().tracks + self.song().return_tracks
+        for scene_index in range(min(self.num_scenes, 3)):
+            for track_index in range(min(len(tracks), 15)):
+                self.clip_launch_buttons[scene_index][track_index].add_value_listener(lambda value, si=scene_index, ti=track_index: self._set_crossfader_control(si, ti))
 
-    def _engage_crossfader_binding(self, value):
-        if self._is_scene_mode or self._is_alt_mode:
-            return
-        if value == 127:
-            self.session.unbind_clip_launch()
-            for scene_index in range(self.num_scenes % 2):
-                scene = self.scene(scene_index)
-                for track_index in range(self.num_tracks):
-                    Live.Base.log((self.song().tracks + self.song().return_tracks)[track_index].mixer_device.crossfade_assign)
-        elif value == 0:
-            self.session.setup_clip_launch()
+    def _set_crossfader_control(self, value, index):
+        (self.song().tracks + self.song().return_tracks)[index + self._track_offset].mixer_device.crossfade_assign = value
 
     def unbind_alt(self):
         self.set_select_buttons(None, None)

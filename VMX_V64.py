@@ -104,7 +104,6 @@ class VMX_V64(ControlSurface):
         self._mixer.selected_strip().name = 'Selected_Channel_Strip'
         self._mixer.prepare_crossfader_control(self._ctrl_map[CROSSFADER1])
         self._mixer.prepare_prehear_volume_control(self._ctrl_map[CUELEVEL])
-        self._mixer.setup_crossfader_binding_button(self._note_map[70])
         self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
         self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
         self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
@@ -147,7 +146,6 @@ class VMX_V64(ControlSurface):
         self._session_zoom.name = 'Session_Overview'
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
                                            self._note_map[ZOOMRIGHT])
-        self._mixer.session = self.session
         self._mixer.unbind_alt()
         self._mixer.setup_track_deletion()
 

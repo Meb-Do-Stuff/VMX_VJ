@@ -1,62 +1,81 @@
 # Logbook!
 
-*Here goes my logs*
+---
+
+*Here go my logs*
 
 ## Origin
 
-While lurking around online, searching for some cool MIDI equipment to mess with softwares like Ableton, I found the brand [Codanova](http://codanova.over-blog.com/), which closed in 2012.<br>
-Beforewards, this brand had released a bunch of devices.<br>I managed to get ~~1~~ *2*, a [Codanova VMX V64](http://codanova.over-blog.com/article-new-prototype-midi-controller-codanova-vmx-v64-50855556.html) *and a [VMX VJ](http://codanova-fr.over-blog.com/article-27262311.html)*.<br>
-Their integrations with Ableton is quite poor, and you have to map everything manually each time, kinda annoying.<br>
-My goal will be to create surface controls, so it can auto-map itself, and do even better stuff.
+While lurking online, searching for some cool MIDI equipment to use with software like Ableton, I found the brand [Codanova](http://codanova.over-blog.com/), which closed in 2012.<br>
+Before that, this brand had released a bunch of devices.<br> I managed to get *two*: a [Codanova VMX V64](http://codanova.over-blog.com/article-new-prototype-midi-controller-codanova-vmx-v64-50855556.html) and a [VMX VJ](http://codanova-fr.over-blog.com/article-27262311.html).<br>
+Their integration with Ableton is quite poor, and you have to map everything manually each time, which is kinda annoying.<br>
+My goal is to create surface controls so it can auto-map itself and do even better stuff.
 
-## Base knowledge & Finding ressources
+## Base Knowledge & Finding Resources
 
-Surface controls are Python scripts, that are used by Ableton to turn random Midi controllers, into war machines.<br>
-<br>Ressources:<br>
-[Ableton 12 other surface controls](https://github.com/gluon/AbletonLive12_MIDIRemoteScripts)<br>
-[Live module functions](https://structure-void.com/PythonLiveAPI_documentation/Live11.0.xml)<br>
-[_framework module documentation](https://structure-void.com/AbletonLiveRemoteScripts_Docs/_Framework/)<br>
-[Manuel for the VMX V64](https://www.manualslib.com/manual/2817471/Codanova-Vmx-V-64.html)
+Surface controls are Python scripts used by Ableton to turn random MIDI controllers into war machines.<br>
+<br>Resources:<br>
+[Ableton 12 Other Surface Controls](https://github.com/gluon/AbletonLive12_MIDIRemoteScripts)<br>
+[Live Module Functions](https://structure-void.com/PythonLiveAPI_documentation/Live11.0.xml)<br>
+[_Framework Module Documentation](https://structure-void.com/AbletonLiveRemoteScripts_Docs/_Framework/)<br>
+[Manual for the VMX V64](https://www.manualslib.com/manual/2817471/Codanova-Vmx-V-64.html)
 
 To start with, I'll use [Laidlaw42's Custom MIDI Remote Script repo](https://github.com/laidlaw42/ableton-live-midi-remote-scripts) as a base.
 
+I'll use [PyCharm](https://www.jetbrains.com/pycharm/), [MIDI Tools](https://mountainutilities.eu/miditools), [GIMP](https://www.gimp.org/), and [LibreOffice Draw](https://www.libreoffice.org/discover/draw/) (for now).<br>
 
-I'll use [PyCharm](https://www.jetbrains.com/pycharm/), [MIDI Tools](https://mountainutilities.eu/miditools), [GIMP](https://www.gimp.org/) and [LibreOffice Draw](https://www.libreoffice.org/discover/draw/) (for now).
 
-
+**Usage of AI:** I've used AI such as GitHub Copilot to help with completing long lines of characters going in a logic way. *There are not enough ressources online about this to have Copilot working properly anyway.*<br>
+*For example:*
+```python
+MENUBUTTONS = [
+    65, 66, 73, 74,
+    67, 68, 75, 76,
+    69, 70, 77, 78,
+    71, 72, 79, 80
+]
+```
+ChatGPT has been used to correct typo errors and information about Ableton (such as what are banks, and can I have more crossfaders than one (the answer is no, but I thought of a way)).
 ## Step 1: Perfect Controller Settings!
 
-The Codanova VMX V64 can be configured with Dip-Switches
+The Codanova VMX V64 can be configured with Dip-Switches.
 
-First step is to fulfill the [MIDI_Map.py file](https://github.com/laidlaw42/ableton-live-midi-remote-scripts/blob/YourControllerName/YourControllerName%20-%20Live%2011/MIDI_Map.py).<br>
+The first step is to fulfill the [MIDI_Map.py file](https://github.com/laidlaw42/ableton-live-midi-remote-scripts/blob/YourControllerName/YourControllerName%20-%20Live%2011/MIDI_Map.py).<br>
 Since my controller is quite special, I'll probably take another path, but I have to do a mapping anyway.
 
-<img src="https://github.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/blob/main/dipswitch.jpg?raw=true" height="200">
+<img src="https://github.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/blob/main/dipswitch.jpg?raw=true" height="200" alt="">
 
-There is a software to directly modify settings with the firmware, but this software looks broken (maybe for a future project).
+There is software to directly modify settings with the firmware, but this software seems broken (maybe for a future project).
 
 ## Step 2: MIDI Mapping
 
-First thing to do is the re-adapt this script that was made for an 8x8 controller, to my 16x4.<br>
-There are matrix of -1, and I'm quite sure that the wrong amount of -1 would generate an error.
-It's now time to find buttons and everything.
+The first thing to do is to re-adapt this script that was made for an 8x8 controller to my 16x4.<br>
+There are matrices of -1, and I'm quite sure that the wrong amount of -1 would generate an error.
+It's now time to find the buttons and everything.
 
 <img src="https://raw.githubusercontent.com/Meb-Do-Stuff/Codanova-VMX-V64-Ableton-Surface-Control/main/Map.png" height="500">
-<br>Outputing is really weird, I'll try again later.
+<br>Outputting is really weird, I'll try again later.
 
-I managed to set that the 16x4 buttons can launch clip, and the 16x2 knobs can managed the Send A & B, and faders manage volume.<br>
-The jog can now manage time.<br>
-I can now move the view with buttons 65 and 66 for up and down, 67 and 68 for left and right.<br>
-Play, Stop, Stop Clips and Record with 80, 79, 78 and 77.<br>
+I managed to set the 16x4 buttons to launch clips, and the 16x2 knobs can manage the Send A & B, while the faders manage volume.<br>
+The jog wheel can now manage time.<br>
+I can now move the view with buttons 65 and 66 for up and down, and 67 and 68 for left and right.<br>
+Play, Stop, Stop Clips, and Record with 80, 79, 78, and 77.<br>
 
 ## Step 3: Advanced Functions
 
-I managed to create an ALT button, that changes the 1 row of buttons to manage the selection of tracks.<br>
-The second row of buttons can now manage the mute, 3rd solo and 4th arm of the selected track.<br>
+I managed to create an ALT button that changes the first row of buttons to manage the selection of tracks.<br>
+The second row of buttons can now manage the mute, the third solo, and the fourth arm of the selected track.<br>
 The 16x2 knobs manage send C and pan in ALT mode.<br>
-The 8 faders manages the 8 other volume tracks in ALT mdoe (since this device should manage 16 tracks).<br>
-The jog manage the master volume in ALT mode.<br>
-The view buttons now manage the clip selection in ALT mode, and play button (80) launch the currently selected clip in ALT mode.<br>
+The 8 faders manage the 8 other volume tracks in ALT mode (since this device should manage 16 tracks).<br>
+The jog wheel manages the master volume in ALT mode.<br>
+The view buttons now manage the clip selection in ALT mode, and the play button (80) launches the currently selected clip in ALT mode.<br>
+The first crossfader can now manage the crossfade, while the second one manages the Cue (preview) level.<br>
+In scene mode, the first 15 buttons bind the track to crossfade A, the second remove the binding, and the third bind to crossfade B.<br>
+
+## Now what?
+
+I've pretty much managed to do everything I wanted to do with this controller.<br>
+I'll now try to make it more user-friendly, and maybe add some more features, but I need to fix the firmware to have push buttons, and a better comprehension of the input/output.<br>
 
 ---
 
