@@ -1,7 +1,3 @@
-# Codanova VMX V64 Control Surface
+# Codanova VMX VJ Control Surface
 
 [Log book of this project](LogBook.md)
-
-## Current layout:
-
-![vmx_v64.png](vmx_v64.png)

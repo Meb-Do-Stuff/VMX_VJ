@@ -8,7 +8,7 @@ class SpecialMixerComponent(MixerComponent):
     """ Special mixer class that uses return tracks alongside midi and audio tracks """
     __module__ = __name__
 
-    def __init__(self, num_scenes: int, num_tracks: int, track_left: ButtonElement, track_right: ButtonElement, jog_wheel: ButtonElement):
+    def __init__(self, num_scenes: int, num_tracks: int, track_left: ButtonElement, track_right: ButtonElement):
         MixerComponent.__init__(self, num_tracks)
         self.num_scenes = num_scenes
         self.num_tracks = num_tracks
@@ -18,7 +18,6 @@ class SpecialMixerComponent(MixerComponent):
         self.track_left = track_left
         self.track_right = track_right
         self.clip_launch_buttons = []
-        self._jog_wheel = jog_wheel
         self._crossfader = None
         self.delete_button = None
         self._prehear_fader = None
@@ -59,9 +58,6 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_pan_control(self.send_b[track])
             strip.set_send_controls((None, None, self.send_a[track]))
             strip.set_invert_mute_feedback(True)
-        if self._jog_wheel is not None:
-            self._jog_wheel.add_value_listener(self._master_control)
-        self._is_alt_mode = True
         self.update()
 
     def _master_control(self, value: float):
@@ -105,27 +101,6 @@ class SpecialMixerComponent(MixerComponent):
         """
         self.tracks_to_use()[index + self._track_offset].mixer_device.crossfade_assign = value
 
-    def unbind_alt(self):
-        """
-        Unbind the alt mode for hte mixer part.
-        """
-        self.set_select_buttons(None, None)
-        for track in range(self.num_tracks):
-            strip = self.channel_strip(track)
-            strip.name = 'Channel_Strip_' + str(track)
-            strip.set_select_button(None)
-            strip.set_mute_button(None)
-            strip.set_solo_button(None)
-            strip.set_arm_button(None)
-            strip.set_volume_control((self.volumes_faders + [None] * 8)[track])
-            strip.set_pan_control(None)
-            strip.set_send_controls((self.send_a[track], self.send_b[track], None))
-            strip.set_invert_mute_feedback(True)
-        if self._jog_wheel is not None:
-            self._jog_wheel.remove_value_listener(self._master_control)
-        self._is_alt_mode = False
-        self.update_all()
-
     def setup_track_deletion(self):
         """
         Setup the deletion manager for the mixer.
@@ -137,7 +112,6 @@ class SpecialMixerComponent(MixerComponent):
             self.volumes_faders[button].add_value_listener(lambda value, index=button: self._reset_value(index + 8, 0))
             self.send_a[button].add_value_listener(lambda value, index=button: self._reset_value(index, 1))
             self.send_b[button].add_value_listener(lambda value, index=button: self._reset_value(index, 2))
-            self._jog_wheel.add_value_listener(lambda value, index=button: self._reset_value(index, 3))
         self._crossfader.add_value_listener(lambda value: self._reset_value(0, 4))
         self._prehear_fader.add_value_listener(lambda value: self._reset_value(0, 5))
         self.update()

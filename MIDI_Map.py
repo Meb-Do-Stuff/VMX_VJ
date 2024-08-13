@@ -9,20 +9,20 @@ SCENE_OFFSET = 0  # offset from the top of linked session origin (no auto-join)
 # Valid Note/CC assignments are 0 to 127, or -1 for NONE
 # Duplicate assignments are permitted
 
-BUTTONCHANNEL = 0  # Channel assignment for all mapped buttons/pads; valid range is 0 to 15 ; 0=1, 1=2 etc.
+BUTTONCHANNEL = 2  # Channel assignment for all mapped buttons/pads; valid range is 0 to 15 ; 0=1, 1=2 etc.
 MESSAGETYPE = 1  # Message type for buttons/pads; set to 0 for MIDI Notes, 1 for CCs.
 # When using CCs for buttons/pads, set BUTTONCHANNEL and SLIDERCHANNEL to different values.
 
 
 # Track selection box (aka that coloured box for scene/track launching)
-TSB_X = 16  # Controls the vertical value for the track selection box. Default value is 8
+TSB_X = 8  # Controls the vertical value for the track selection box. Default value is 8
 TSB_Y = 4  # Controls the horizontal value for the track selection box. Default value is 8
 
 # General
-PLAY = 80  # Global play
-STOP = 79  # Global stop
-REC = 77  # Global record
-DELETE = 69  # Delete selected clip
+PLAY = 11  # Global play
+STOP = 55  # Global stop
+REC = -1  # Global record
+DELETE = -1  # Delete selected clip
 TAPTEMPO = -1  # Tap tempo
 NUDGEUP = -1  # Tempo Nudge Up
 NUDGEDOWN = -1  # Tempo Nudge Down
@@ -51,10 +51,10 @@ SEEKFWD = -1  # Seek forward
 SEEKRWD = -1  # Seek rewind
 
 # Session Navigation
-SESSIONLEFT = 67  # Session left
-SESSIONRIGHT = 68  # Session right
-SESSIONUP = 65  # Session up
-SESSIONDOWN = 66  # Session down
+SESSIONLEFT = 45  # Session left
+SESSIONRIGHT = 1  # Session right
+SESSIONUP = 15  # Session up
+SESSIONDOWN = 5  # Session down
 ZOOMUP = -1  # Session Zoom up
 ZOOMDOWN = -1  # Session Zoom down
 ZOOMLEFT = -1  # Session Zoom left
@@ -65,16 +65,11 @@ SELSCENELAUNCH = -1  # Selected scene launch
 SCENELAUNCH = tuple([-1] * 4)  # Scene launch buttons
 
 # Clip Launch / Stop
-SELCLIPLAUNCH = 80  # Selected clip launch
-STOPALLCLIPS = 78  # Stop all clips
+SELCLIPLAUNCH = -1  # Selected clip launch
+STOPALLCLIPS = -1  # Stop all clips
 
-# 8x8 Matrix note assignments
-# Track no.:    1  2  3  4  5   6   7   8   9   10  11  12  13  14  15  16
-CLIPNOTEMAP = ((1, 2, 3, 4, 17, 18, 19, 20, 33, 34, 35, 36, 49, 50, 51, 52),  # Row 1
-               (5, 6, 7, 8, 21, 22, 23, 24, 37, 38, 39, 40, 53, 54, 55, 56),  # Row 2
-               (9, 10, 11, 12, 25, 26, 27, 28, 41, 42, 43, 44, 57, 58, 59, 60),  # Row 3
-               (13, 14, 15, 16, 29, 30, 31, 32, 45, 46, 47, 48, 61, 62, 63, 64),  # Row 4
-               )
+# 8x4 Matrix note assignments
+CLIPNOTEMAP = tuple(tuple([[-1] * 8])*4)
 
 # Track Control
 MASTERSEL = -1  # Master track select
@@ -82,11 +77,11 @@ SELTRACKREC = -1  # Arm Selected Track
 SELTRACKSOLO = -1  # Solo Selected Track
 SELTRACKMUTE = -1  # Mute Selected Track
 
-TRACKSTOP = tuple([-1] * 16)  # Track stop buttons
-TRACKSEL = tuple([-1] * 16)  # Track select buttons
-TRACKMUTE = tuple([-1] * 16)  # Track mute buttons
-TRACKSOLO = tuple([-1] * 16)  # Track solo buttons
-TRACKREC = tuple([-1] * 16)  # Track record arm buttons
+TRACKSTOP = tuple([-1] * 8)  # Track stop buttons
+TRACKSEL = tuple([-1] * 8)  # Track select buttons
+TRACKMUTE = tuple([-1] * 8)  # Track mute buttons
+TRACKSOLO = tuple([-1] * 8)  # Track solo buttons
+TRACKREC = tuple([-1] * 8)  # Track record arm buttons
 
 # Pad Translations for Drum Rack
 PADCHANNEL = 0  # MIDI channel for Drum Rack notes
@@ -100,66 +95,26 @@ DRUM_PADS = (-1, -1, -1, -1,  # MIDI note numbers for 4 x 4 Drum Rack
 # ---------------
 # Valid CC assignments are 0 to 127, or -1 for NONE
 # Duplicate assignments will be ignored
-SLIDERCHANNEL = 2  # Channel assignment for all mapped CCs; valid range is 0 to 15
+SLIDERCHANNEL = 0  # Channel assignment for all mapped CCs; valid range is 0 to 15
 TEMPO_TOP = 180.0  # Upper limit of tempo control in BPM (max is 999)
 TEMPO_BOTTOM = 100.0  # Lower limit of tempo control in BPM (min is 0)
 
 TEMPOCONTROL = -1  # Tempo control CC assignment; control range is set above
 MASTERVOLUME = -1  # Master track volume
-CUELEVEL = 117  # Cue level control
-CROSSFADER1 = 122  # Crossfader control
+CUELEVEL = -1  # Cue level control
+CROSSFADER1 = -1  # Crossfader control
 
-TRACKVOL = (118,  # Track 1 Volume
-            119,  # Track 2
-            120,  # Track 3
-            121,  # Track 4
-            113,  # Track 5
-            114,  # Track 6
-            115,  # Track 7
-            116,  # Track 8
-            )
+TRACKVOL = tuple([-1] * 8)
 
-TRACKPAN = tuple([-1] * 16)  # Track pan controls
+TRACKPAN = tuple([-1] * 8)  # Track pan controls
 
-TRACKSENDA = (81,  # Track 1 Send A
-              83,  # Track 2
-              85,  # Track 3
-              87,  # Track 4
-              89,  # Track 5
-              91,  # Track 6
-              93,  # Track 7
-              95,  # Track 8
-              97,  # Track 9
-              99,  # Track 10
-              101,  # Track 11
-              103,  # Track 12
-              105,  # Track 13
-              107,  # Track 14
-              109,  # Track 15
-              111,  # Track 16
-              )
+TRACKSENDA = tuple([-1] * 8) # Track send A controls
 
-TRACKSENDB = (82,  # Track 1 Send B
-              84,  # Track 2
-              86,  # Track 3
-              88,  # Track 4
-              90,  # Track 5
-              92,  # Track 6
-              94,  # Track 7
-              96,  # Track 8
-              98,  # Track 9
-              100,  # Track 10
-              102,  # Track 11
-              104,  # Track 12
-              106,  # Track 13
-              108,  # Track 14
-              110,  # Track 15
-              112,  # Track 16
-              )
+TRACKSENDB = tuple([-1] * 8)  # Track send B controls
 
-TRACKSENDC = tuple([-1] * 16)  # Track send C controls
+TRACKSENDC = tuple([-1] * 8)  # Track send C controls
 
-PARAMCONTROL = tuple([-1] * 16)  # Device control
+PARAMCONTROL = tuple([-1] * 8)  # Device control
 
 # Custom Menu
 # ----------
@@ -169,3 +124,5 @@ MENUBUTTONS = [
     69, 70, 77, 78,
     71, 72, 79, 80
 ]
+
+TOGGLE_NOTES = []

@@ -22,8 +22,8 @@ from .MIDI_Map import *
 # MIDI_PB_TYPE = 2
 
 
-class VMX_V64(ControlSurface):
-    __doc__ = " Script for VMX V64 with correct dip switch "
+class VMX_VJ(ControlSurface):
+    __doc__ = " Script for VMX VJ with correct dip switch "
 
     _active_instances = []
 
@@ -31,14 +31,14 @@ class VMX_V64(ControlSurface):
         """ Static method to set up new instances of the device """
         track_offset = 0
         scene_offset = 0
-        for instance in VMX_V64._active_instances:
+        for instance in VMX_VJ._active_instances:
             instance.activate_combination_mode(track_offset, scene_offset)
             track_offset += instance.session.width()
 
     _combine_active_instances = staticmethod(_combine_active_instances)
 
     def __init__(self, c_instance):
-        """ Initialize the VMX V64 script """
+        """ Initialize the VMX VJ script """
         ControlSurface.__init__(self, c_instance)
         # self.set_suppress_rebuild_requests(True)
         with self.component_guard():
@@ -77,14 +77,14 @@ class VMX_V64(ControlSurface):
         ControlSurface.disconnect(self)
 
     def _do_combine(self):
-        if self not in VMX_V64._active_instances:
-            VMX_V64._active_instances.append(self)
-            VMX_V64._combine_active_instances()
+        if self not in VMX_VJ._active_instances:
+            VMX_VJ._active_instances.append(self)
+            VMX_VJ._combine_active_instances()
 
     def _do_uncombine(self):
-        if (self in VMX_V64._active_instances) and VMX_V64._active_instances.remove(self):
+        if (self in VMX_VJ._active_instances) and VMX_VJ._active_instances.remove(self):
             self.session.unlink()
-            VMX_V64._combine_active_instances()
+            VMX_VJ._combine_active_instances()
 
     def activate_combination_mode(self, track_offset, scene_offset):
         if TRACK_OFFSET != -1:
@@ -97,8 +97,7 @@ class VMX_V64(ControlSurface):
         """
         Setup settings related to SpecialMixerComponent
         """
-        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT],
-                                            self._jog_wheel)  # Initialize the component (extended from _Framework.MixerComponent)
+        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT])  # Initialize the component (extended from _Framework.MixerComponent)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
@@ -191,13 +190,12 @@ class VMX_V64(ControlSurface):
             self.session.clip_launch_buttons.append(button_row)
             self._mixer.clip_launch_buttons.append(button_row)
         self.session.setup_clip_launch()
-        self.session.deletion_manager()
+        # self.session.deletion_manager()
         self._session_zoom = SpecialZoomingComponent(self.session)
         self._session_zoom.name = 'Session_Overview'
         self._session_zoom.set_nav_buttons(self._note_map[ZOOMUP], self._note_map[ZOOMDOWN], self._note_map[ZOOMLEFT],
                                            self._note_map[ZOOMRIGHT])
-        self._mixer.unbind_alt()
-        self._mixer.setup_track_deletion()
+        # self._mixer.setup_track_deletion()
 
     def _on_selected_track_changed(self):
         ControlSurface._on_selected_track_changed(self)
@@ -222,7 +220,7 @@ class VMX_V64(ControlSurface):
         Load MIDI map.
         """
         for note in range(128):
-            if note <= 64:  # The 16x4 matrix is toggle until I found out how to have it in push mode.
+            if note in TOGGLE_NOTES:  # The 16x4 matrix is toggle until I found out how to have it in push mode.
                 is_momentary = False
             else:
                 is_momentary = True
@@ -244,5 +242,5 @@ class VMX_V64(ControlSurface):
         for note in MENUBUTTONS:
             self._menu_map.append(self._note_map[note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
 
-        self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 0, 125)
+        self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 5, 101)
         self._jog_wheel.name = 'Jog_Wheel'

@@ -1,6 +1,6 @@
-from .VMX_V64 import VMX_V64
+from .VMX_VJ import VMX_VJ
 
 
 def create_instance(c_instance):
-    """ VMX V64 script """
-    return VMX_V64(c_instance)
+    """ VMX VJ script """
+    return VMX_VJ(c_instance)

@@ -5,7 +5,7 @@ from math import sqrt
 
 
 class SpecialSessionComponent(SessionComponent):
-    """ Special SessionComponent for VMX V64 combination mode and button to fire selected clip slot, as well as an alt system """
+    """ Special SessionComponent for VMX VJ combination mode and button to fire selected clip slot, as well as an alt system """
     __module__ = __name__
 
     def __init__(self, num_tracks: int, num_scenes: int, menu_buttons: [ButtonElement], mixer, transport):

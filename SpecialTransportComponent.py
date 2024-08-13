@@ -65,11 +65,11 @@ class SpecialTransportComponent(TransportComponent):
 
     def _time_value(self, value):
         """
-        Function to move the current song time, 0 is left, else it's right
+        Function to move the current song time, 1 is left, else it's right
         """
         assert (self.time_button is not None)
         if self.is_enabled():
-            if value == 0:
+            if value == 1:
                 self._move_current_song_time(-1, 1)
             else:
                 self._move_current_song_time(1, 1)
