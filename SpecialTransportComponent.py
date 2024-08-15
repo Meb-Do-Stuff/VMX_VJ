@@ -63,6 +63,13 @@ class SpecialTransportComponent(TransportComponent):
             self.time_button.add_value_listener(self._time_value)
         self.update()
 
+    def unbind_jog_wheel(self):
+        """
+        Bind jog wheel to time control
+        """
+        if self.time_button is not None:
+            self.time_button.remove_value_listener(self._time_value)
+
     def _time_value(self, value):
         """
         Function to move the current song time, 1 is left, else it's right
@@ -73,13 +80,6 @@ class SpecialTransportComponent(TransportComponent):
                 self._move_current_song_time(-1, 1)
             else:
                 self._move_current_song_time(1, 1)
-
-    def unbind_jog_wheel(self):
-        """
-        Bind jog wheel to time control
-        """
-        if self.time_button is not None:
-            self.time_button.remove_value_listener(self._time_value)
 
     def _quant_toggle_value(self, value: int):
         """
@@ -193,15 +193,3 @@ class SpecialTransportComponent(TransportComponent):
         if self.is_enabled():
             fraction = ((TEMPO_TOP - TEMPO_BOTTOM) / 127.0)
             self.song().tempo = ((fraction * value) + TEMPO_BOTTOM)
-
-    def setup_play_button(self):
-        """
-        Bind play button to play the song.
-        """
-        self.set_play_button(self.play_button)
-
-    def unbind_play_button(self):
-        """
-        Unbind play button from playing the song.
-        """
-        self.set_play_button(None)

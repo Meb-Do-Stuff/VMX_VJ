@@ -14,7 +14,6 @@ class SpecialSessionComponent(SessionComponent):
         self.num_tracks = num_tracks
         self.slot_launch_button = None
         self.clip_launch_buttons = []
-        self._setup_igniter()
 
     def setup_clip_launch(self):
         """

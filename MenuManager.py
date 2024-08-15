@@ -1,6 +1,7 @@
-﻿from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
-from _Framework.SliderElement import SliderElement
-from _Framework.ButtonElement import ButtonElement
+﻿import Live
+from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
+# from _Framework.SliderElement import SliderElement
+# from _Framework.ButtonElement import ButtonElement
 
 
 class SpecialMenuComponent(ControlSurfaceComponent):
@@ -13,15 +14,16 @@ class SpecialMenuComponent(ControlSurfaceComponent):
         self.name = name
 
     def activated(self):
-        for bind, note in self.bind_functions:
-            if note is None:
+        for bind, arg in self.bind_functions:
+            Live.Base.log("Activated Stuff")
+            if arg is None:
                 bind()
             else:
-                bind(note)
+                bind(arg)
 
     def deactivated(self):
-        for unbind, note in self.unbind_functions:
-            if note is None:
+        for unbind, arg in self.unbind_functions:
+            if arg is None:
                 unbind()
             else:
                 unbind(None)
@@ -34,7 +36,7 @@ class SpecialMenuComponent(ControlSurfaceComponent):
 class MenuManager(ControlSurfaceComponent):
     __module__ = __name__
 
-    def __init__(self, note_map: list[ButtonElement], ctrl_map: list[SliderElement]):
+    def __init__(self, note_map, ctrl_map):
         ControlSurfaceComponent.__init__(self)
         self._note_map = note_map
         self._ctrl_map = ctrl_map
@@ -45,10 +47,11 @@ class MenuManager(ControlSurfaceComponent):
         self._menus[menu.name] = menu
 
     def activate_menu(self, menu_name: str):
+        Live.Base.log("Activating Menu " + menu_name)
         if self.current_menu is not None:
             self.current_menu.deactivated()
-        self.current_menu = self.menus[menu_name]
+        self.current_menu = self._menus[menu_name]
         self.current_menu.activated()
 
-    def add_binds_to_menu(self, name: str, bind_function, unbind_function, note: None):
-        self._menus[name].add_binds(bind_function, unbind_function, note)
+    def add_binds_to_menu(self, name: str, bind_function, unbind_function, arg: None):
+        self._menus[name].add_binds(bind_function, unbind_function, arg)

@@ -57,3 +57,59 @@ class SpecialMixerComponent(MixerComponent):
         :param index: The index of the track to delete.
         """
         self.song().delete_track(index)
+
+    def set_volume_control(self, controls):
+        """
+        Bind the volume control for each tracks to the given controls.
+        :param controls: The controls to bind the volumes to.
+        """
+        for track in range(self.num_tracks):
+            strip = self._mixer.channel_strip(track)
+            strip.set_volume_control(controls[track])
+    #
+    # def set_pan_control(self, controls):
+    #     """
+    #     Bind the pan control for each tracks to the given controls.
+    #     :param controls: The controls to bind the pans to.
+    #     """
+    #     for track in range(self.num_tracks):
+    #         strip = self._mixer.channel_strip(track)
+    #         strip.set_pan_control(controls[track])
+    #
+    # def set_arm_button(self, controls):
+    #     """
+    #     Bind the arm button for each tracks to the given controls.
+    #     :param controls: The controls to bind the arm buttons to.
+    #     """
+    #     for track in range(self.num_tracks):
+    #         strip = self._mixer.channel_strip(track)
+    #         strip.set_arm_button(controls[track])
+    #
+    # def set_solo_button(self, controls):
+    #     """
+    #     Bind the solo button for each tracks to the given controls.
+    #     :param controls: The controls to bind the solo buttons to.
+    #     """
+    #     for track in range(self.num_tracks):
+    #         strip = self._mixer.channel_strip(track)
+    #         strip.set_solo_button(controls[track])
+    #
+    # def set_mute_button(self, controls):
+    #     """
+    #     Bind the mute button for each tracks to the given controls.
+    #     :param controls: The controls to bind the mute buttons to.
+    #     """
+    #     for track in range(self.num_tracks):
+    #         strip = self._mixer.channel_strip(track)
+    #         strip.set_mute_button(controls[track])
+    #
+    # def set_track_select_button(self, controls):
+    #     """
+    #     Bind the track select button for each tracks to the given controls.
+    #     :param controls: The controls to bind the track select buttons to.
+    #     """
+    #     for track in range(self.num_tracks):
+    #         strip = self._mixer.channel_strip(track)
+    #         strip.set_select_button(controls[track])
+
+    # strip.set_send_controls((None, None, None))

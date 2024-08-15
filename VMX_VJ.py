@@ -51,14 +51,15 @@ class VMX_VJ(ControlSurface):
             self._mixer = None
             self._transport = None
             self.session = None
-            self.menu_manager = None
             self._load_MIDI_map()
+            self.menu_manager = MenuManager(self._note_map, self._ctrl_map)
             self._setup_menu_control()
             self._setup_mixer_control()
             self._setup_device_and_transport_control()
             self._setup_session_control()  # Set up the session control. The order of execution is important!
             self.set_highlighting_session_component(self.session)
             # self.set_suppress_rebuild_requests(False)
+            self.menu_manager.activate_menu("default")
         self._pads = []  # Drum pads (future use?)
         self._load_pad_translations()
         self._do_combine()
@@ -100,7 +101,6 @@ class VMX_VJ(ControlSurface):
         """
         Setup menu master and menus
         """
-        self.menu_manager = MenuManager(self._note_map, self._ctrl_map)
         self.menu_manager.name = 'Menu_Manager'
         default_menu = SpecialMenuComponent("default")
         self.menu_manager.add_menu(default_menu)
@@ -127,6 +127,17 @@ class VMX_VJ(ControlSurface):
         # self.menu_manager.add_binds_to_menu("default", self._mixer.set_solo_button, self._mixer.set_solo_button, self._ctrl_map[SELTRACKSOLO])
         # self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.set_mute_button, self._mixer.set_mute_button, self._ctrl_map[SELTRACKMUTE])
+        for track in range(TSB_X):
+            strip = self._mixer.channel_strip(track)
+            strip.name = 'Channel_Strip_' + str(track)
+            # strip.set_arm_button(self._note_map[TRACKREC[track]])
+            # strip.set_solo_button(self._note_map[TRACKSOLO[track]])
+            # strip.set_mute_button(self._note_map[TRACKMUTE[track]])
+            # strip.set_select_button(self._note_map[TRACKSEL[track]])
+            strip.set_volume_control(self._ctrl_map[TRACKVOL[track]])
+            # strip.set_pan_control(self._ctrl_map[TRACKPAN[track]])
+            # strip.set_send_controls((self._ctrl_map[TRACKSENDA[track]], self._ctrl_map[TRACKSENDB[track]], self._ctrl_map[TRACKSENDC[track]]))
+            strip.set_invert_mute_feedback(True)
 
     def _setup_device_and_transport_control(self):
         """
@@ -156,22 +167,37 @@ class VMX_VJ(ControlSurface):
 
         self._transport = SpecialTransportComponent()
         self._transport.name = 'Transport'
-        self.menu_manager.add_binds_to_menu("default", self.set_play_button, self.set_play_button, self._note_map[PLAY])
-        self._transport.set_stop_button(self._note_map[STOP])
-        self._transport.set_record_button(self._note_map[REC])
-        self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
-        self._transport.set_undo_button(self._note_map[UNDO])
-        self._transport.set_redo_button(self._note_map[REDO])
-        self._transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
-        self._transport.set_quant_toggle_button(self._note_map[RECQUANT])
-        self._transport.set_overdub_button(self._note_map[OVERDUB])
-        self._transport.set_metronome_button(self._note_map[METRONOME])
-        self._transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
-        self._transport.set_loop_button(self._note_map[LOOP])
-        self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
-        self._transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
         self._transport.time_button = self._jog_wheel
-        self._transport.set_jog_wheel_time()
+        # self._transport.set_play_button(self._note_map[PLAY])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button, self._note_map[PLAY])
+        # self._transport.set_stop_button(self._note_map[STOP])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button, self._note_map[STOP])
+        # self._transport.set_record_button(self._note_map[REC])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button, self._transport.set_record_button, self._note_map[REC])
+        # self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_nudge_buttons, self._transport.set_nudge_buttons, self._note_map[NUDGEUP])
+        # self._transport.set_undo_button(self._note_map[UNDO])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_undo_button, self._transport.set_undo_button, self._note_map[UNDO])
+        # self._transport.set_redo_button(self._note_map[REDO])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_redo_button, self._transport.set_redo_button, self._note_map[REDO])
+        # self._transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_tap_tempo_button, self._transport.set_tap_tempo_button, self._note_map[TAPTEMPO])
+        # self._transport.set_quant_toggle_button(self._note_map[RECQUANT])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_quant_toggle_button, self._transport.set_quant_toggle_button, self._note_map[RECQUANT])
+        # self._transport.set_overdub_button(self._note_map[OVERDUB])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_overdub_button, self._transport.set_overdub_button, self._note_map[OVERDUB])
+        # self._transport.set_metronome_button(self._note_map[METRONOME])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_metronome_button, self._transport.set_metronome_button, self._note_map[METRONOME])
+        # self._transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_tempo_control, self._transport.set_tempo_control, self._ctrl_map[TEMPOCONTROL])
+        # self._transport.set_loop_button(self._note_map[LOOP])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_loop_button, self._transport.set_loop_button, self._note_map[LOOP])
+        # self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_seek_buttons, self._transport.set_seek_buttons, self._note_map[SEEKFWD])
+        # self._transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_punch_buttons, self._transport.set_punch_buttons, self._note_map[PUNCHIN])
+        # self._transport.set_jog_wheel_time()
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_time, self._transport.unbind_jog_wheel, None)
 
     def _setup_session_control(self):
         """
@@ -179,9 +205,9 @@ class VMX_VJ(ControlSurface):
         """
         self.session = SpecialSessionComponent(TSB_X, TSB_Y)  # Track selection box size (X,Y) (horizontal, vertical).
         self.session.name = 'Session_Control'
-        self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
-        self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
-        self._session.set_select_buttons(self._note_map[SCENEDN], self._note_map[SCENEUP])
+        self.session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
+        self.session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
+        self.session.set_select_buttons(self._note_map[SCENEDN], self._note_map[SCENEUP])
         self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in
                                     range(TSB_X)]  # range(tsb_x) Range value is the track selection
         self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in

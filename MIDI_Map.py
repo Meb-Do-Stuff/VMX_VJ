@@ -108,11 +108,11 @@ MASTERVOLUME = -1  # Master track volume
 CUELEVEL = -1  # Cue level control
 CROSSFADER1 = -1  # Crossfader control
 
-TRACKVOL = tuple([-1] * 8)
+TRACKVOL = (28, 29, 30, 31, 27, 26, 25, 24)  # Track volume controls
 
 TRACKPAN = tuple([-1] * 8)  # Track pan controls
 
-TRACKSENDA = tuple([-1] * 8) # Track send A controls
+TRACKSENDA = tuple([-1] * 8)  # Track send A controls
 
 TRACKSENDB = tuple([-1] * 8)  # Track send B controls
 
