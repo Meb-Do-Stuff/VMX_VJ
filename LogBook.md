@@ -48,4 +48,5 @@ Moral support:<br>
 [Rimarkable's Boiler Room](https://youtu.be/hoyCaeT_tuo)<br>
 [Four Tet's Boiler Room](https://www.youtube.com/watch?v=Ca6pjR2TLns)<br>
 [Sweet Valley single *So Serene*](https://open.spotify.com/intl-fr/album/3VM5KHTGJAVkbFc1tkDTHG)<br>
-[White Birds *When Women Played Drums*](https://open.spotify.com/intl-fr/album/0pjKENinrmO6cBGplZIEfS)
+[White Birds *When Women Played Drums*](https://open.spotify.com/intl-fr/album/0pjKENinrmO6cBGplZIEfS)<br>
+[Bryan Deister *Into the Sky*](https://open.spotify.com/intl-fr/track/1nNKZconhkdmqQxbi52lOM?si=8dc37bf1cdad4696)<br>

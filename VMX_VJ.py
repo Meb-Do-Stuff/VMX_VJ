@@ -46,7 +46,8 @@ class VMX_VJ(ControlSurface):
             self._note_map = []  # Prepare CC note (buttons) map
             self._ctrl_map = []  # Prepare CC control (faders) map
             self._menu_map = []  # Prepare menu map (the 8 buttons on the bottom part)
-            self._jog_wheel = None  # Prepare the jog as a button (because it's either 127 in one direction or 0 in the other (so like a button))
+            self._jog_wheel0 = None  # Prepare the jog as a button (because it's either 127 in one direction or 0 in the other (so like a button))
+            self._jog_wheel1 = None
             self._session_zoom = None
             self._mixer = None
             self._transport = None
@@ -71,7 +72,8 @@ class VMX_VJ(ControlSurface):
         self._note_map = None
         self._ctrl_map = None
         self._menu_map = None
-        self._jog_wheel = None
+        self._jog_wheel0 = None
+        self._jog_wheel1 = None
         self._do_uncombine()
         self._session_zoom = None
         self._mixer = None
@@ -123,10 +125,10 @@ class VMX_VJ(ControlSurface):
         # self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.master_strip().set_select_button, self._mixer.master_strip().set_select_button, self._note_map[MASTERSEL])
         self._mixer.selected_strip().name = 'Selected_Channel_Strip'
-        # self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER1])
-        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_crossfader_control, self._mixer.set_crossfader_control, self._ctrl_map[CROSSFADER1])
+        # self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.set_crossfader_control, self._mixer.set_crossfader_control, self._ctrl_map[CROSSFADER])
         # self._mixer.set_prehear_volume_control(self._ctrl_map[CUELEVEL])
-        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_prehear_volume_control, self._mixer.set_prehear_volume_control, self._ctrl_map[CUELEVEL])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.set_prehear_volume_control, self._mixer.set_prehear_volume_control, self._ctrl_map[CUELEVEL])
         # self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.set_volume_control, self._mixer.set_volume_control, self._ctrl_map[MASTERVOLUME])
         # self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
@@ -182,7 +184,8 @@ class VMX_VJ(ControlSurface):
 
         self._transport = SpecialTransportComponent()
         self._transport.name = 'Transport'
-        self._transport.time_button = self._jog_wheel
+        self._transport.time_wheel = self._jog_wheel0
+        self._transport.tempo_wheel = self._jog_wheel1
         self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button,
                                             self._note_map[PLAY])
         self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button,
@@ -204,7 +207,7 @@ class VMX_VJ(ControlSurface):
         # self._transport.set_metronome_button(self._note_map[METRONOME])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_metronome_button, self._transport.set_metronome_button, self._note_map[METRONOME])
         # self._transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
-        # self.menu_manager.add_binds_to_menu("default", self._transport.set_tempo_control, self._transport.set_tempo_control, self._ctrl_map[TEMPOCONTROL])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_tempo, self._transport.unbind_tempo_jog_wheel)
         # self._transport.set_loop_button(self._note_map[LOOP])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_loop_button, self._transport.set_loop_button, self._note_map[LOOP])
         # self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
@@ -213,7 +216,7 @@ class VMX_VJ(ControlSurface):
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_punch_buttons, self._transport.set_punch_buttons, self._note_map[PUNCHIN])
         # self._transport.set_jog_wheel_time()
         self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_time,
-                                            self._transport.unbind_jog_wheel, None)
+                                            self._transport.unbind_time_jog_wheel, None)
 
     def _setup_session_control(self):
         """
@@ -227,8 +230,7 @@ class VMX_VJ(ControlSurface):
         self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in
                                       range(TSB_Y)]  # range(tsb_y) is the horizontal count for the track selection box
         self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
-        # self.session.set_stop_track_clip_buttons
-        self.menu_manager.add_binds_to_menu("default_mixer_0", self.session.set_stop_all_clips_button, self.session.set_stop_all_clips_button, ([self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]))
+        self.menu_manager.add_binds_to_menu("default_mixer_0", self.session.set_stop_track_clip_buttons, self.session.set_stop_track_clip_buttons, tuple([self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]))
         self.session.selected_scene().name = 'Selected_Scene'
         self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
@@ -294,5 +296,8 @@ class VMX_VJ(ControlSurface):
             self._menu_map.append(self._note_map[
                                       note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
 
-        self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 5, 101)
-        self._jog_wheel.name = 'Jog_Wheel'
+        self._jog_wheel0 = ButtonElement(False, MIDI_CC_TYPE, 5, 101)
+        self._jog_wheel0.name = 'Jog_Wheel0'
+
+        self._jog_wheel1 = ButtonElement(False, MIDI_CC_TYPE, 4, 100)
+        self._jog_wheel1.name = 'Jog_Wheel1'

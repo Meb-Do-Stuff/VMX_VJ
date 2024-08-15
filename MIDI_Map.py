@@ -103,10 +103,10 @@ SLIDERCHANNEL = 0  # Channel assignment for all mapped CCs; valid range is 0 to 
 TEMPO_TOP = 180.0  # Upper limit of tempo control in BPM (max is 999)
 TEMPO_BOTTOM = 100.0  # Lower limit of tempo control in BPM (min is 0)
 
-TEMPOCONTROL = -1  # Tempo control CC assignment; control range is set above
+# TEMPOCONTROL = 100  # Tempo control CC assignment; control range is set above
 MASTERVOLUME = -1  # Master track volume
-CUELEVEL = -1  # Cue level control
-CROSSFADER1 = -1  # Crossfader control
+CUELEVEL = 21  # Cue level control
+CROSSFADER = 20  # Crossfader control
 
 TRACKVOL = (28, 29, 30, 31, 27, 26, 25, 24)  # Track volume controls
 

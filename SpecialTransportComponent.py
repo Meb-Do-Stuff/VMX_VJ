@@ -19,7 +19,8 @@ class SpecialTransportComponent(TransportComponent):
         self._undo_button = None
         self._redo_button = None
         self._tempo_encoder_control = None
-        self.time_button = None
+        self.time_wheel = None
+        self.tempo_wheel = None
         self.play_button = None
         # TEMPO_TOP = 300.0
         # TEMPO_BOTTOM = 40.0
@@ -39,9 +40,12 @@ class SpecialTransportComponent(TransportComponent):
         if self._tempo_encoder_control is not None:
             self._tempo_encoder_control.remove_value_listener(self._tempo_encoder_value)
             self._tempo_encoder_control = None
-        if self.time_button is not None:
-            self.time_button.remove_value_listener(self._time_value)
-            self.time_button = None
+        if self.time_wheel is not None:
+            self.time_wheel.remove_value_listener(self._time_value)
+            self.time_wheel = None
+        if self.tempo_wheel is not None:
+            self.tempo_wheel.remove_value_listener(self._tempo_value_spe)
+            self.tempo_wheel = None
 
     def set_quant_toggle_button(self, button: ButtonElement):
         """
@@ -59,27 +63,53 @@ class SpecialTransportComponent(TransportComponent):
         """
         Hook jog to time control
         """
-        if self.time_button is not None:
-            self.time_button.add_value_listener(self._time_value)
+        if self.time_wheel is not None:
+            self.time_wheel.add_value_listener(self._time_value)
         self.update()
 
-    def unbind_jog_wheel(self):
+    def unbind_time_jog_wheel(self):
         """
         Bind jog wheel to time control
         """
-        if self.time_button is not None:
-            self.time_button.remove_value_listener(self._time_value)
+        if self.time_wheel is not None:
+            self.time_wheel.remove_value_listener(self._time_value)
 
     def _time_value(self, value):
         """
         Function to move the current song time, 1 is left, else it's right
         """
-        assert (self.time_button is not None)
+        assert (self.time_wheel is not None)
         if self.is_enabled():
             if value == 1:
                 self._move_current_song_time(-1, 1)
             else:
                 self._move_current_song_time(1, 1)
+
+    def set_jog_wheel_tempo(self):
+        """
+        Hook jog to tempo control
+        """
+        if self.tempo_wheel is not None:
+            self.tempo_wheel.add_value_listener(self._tempo_value_spe)
+        self.update()
+
+    def unbind_tempo_jog_wheel(self):
+        """
+        Bind jog wheel to tempo control
+        """
+        if self.tempo_wheel is not None:
+            self.tempo_wheel.remove_value_listener(self._tempo_value_spe)
+
+    def _tempo_value_spe(self, value):
+        """
+        Function to change the tempo, 1 is -1, else it's +1
+        """
+        assert (self.tempo_wheel is not None)
+        if self.is_enabled():
+            if value == 1:
+                self.song().tempo -= 1
+            else:
+                self.song().tempo += 1
 
     def _quant_toggle_value(self, value: int):
         """
