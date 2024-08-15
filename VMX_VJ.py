@@ -14,6 +14,7 @@ from .SpecialTransportComponent import SpecialTransportComponent
 from .SpecialSessionComponent import SpecialSessionComponent
 from .SpecialZoomingComponent import SpecialZoomingComponent
 from .SpecialViewControllerComponent import DetailViewControllerComponent
+from .MenuManager import MenuManager, SpecialMenuComponent
 from .MIDI_Map import *
 
 
@@ -50,7 +51,9 @@ class VMX_VJ(ControlSurface):
             self._mixer = None
             self._transport = None
             self.session = None
+            self.menu_manager = None
             self._load_MIDI_map()
+            self._setup_menu_control()
             self._setup_mixer_control()
             self._setup_device_and_transport_control()
             self._setup_session_control()  # Set up the session control. The order of execution is important!
@@ -93,26 +96,37 @@ class VMX_VJ(ControlSurface):
             scene_offset = SCENE_OFFSET
         self.session.link_with_track_offset(track_offset, scene_offset)
 
+    def _setup_menu_control(self):
+        """
+        Setup menu master and menus
+        """
+        self.menu_manager = MenuManager(self._note_map, self._ctrl_map)
+        self.menu_manager.name = 'Menu_Manager'
+        default_menu = SpecialMenuComponent("default")
+        self.menu_manager.add_menu(default_menu)
+
     def _setup_mixer_control(self):
         """
         Setup settings related to SpecialMixerComponent
         """
-        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X, self._note_map[SESSIONLEFT], self._note_map[SESSIONRIGHT])  # Initialize the component (extended from _Framework.MixerComponent)
+        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X)  # Initialize the component (extended from _Framework.MixerComponent)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
-        self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
+        # self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.master_strip().set_select_button, self._mixer.master_strip().set_select_button, self._note_map[MASTERSEL])
         self._mixer.selected_strip().name = 'Selected_Channel_Strip'
-        self._mixer.prepare_crossfader_control(self._ctrl_map[CROSSFADER1])
-        self._mixer.prepare_prehear_volume_control(self._ctrl_map[CUELEVEL])
-        self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
-        self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
-        self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
-        self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
-        self._mixer.volumes_faders = [self._ctrl_map[TRACKVOL[index]] for index in
-                                      range(int(TSB_X / 2))]  # range(tsb_x) (because only 8 faders over 16 tracks)
-        self._mixer.send_a = [self._ctrl_map[TRACKSENDA[index]] for index in range(TSB_X)]
-        self._mixer.send_b = [self._ctrl_map[TRACKSENDB[index]] for index in range(TSB_X)]
-        self._mixer.delete_button = self._note_map[DELETE]
+        # self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER1])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_crossfader_control, self._mixer.set_crossfader_control, self._ctrl_map[CROSSFADER1])
+        # self._mixer.set_prehear_volume_control(self._ctrl_map[CUELEVEL])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_prehear_volume_control, self._mixer.set_prehear_volume_control, self._ctrl_map[CUELEVEL])
+        # self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_volume_control, self._mixer.set_volume_control, self._ctrl_map[MASTERVOLUME])
+        # self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_arm_button, self._mixer.set_arm_button, self._ctrl_map[SELTRACKREC])
+        # self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_solo_button, self._mixer.set_solo_button, self._ctrl_map[SELTRACKSOLO])
+        # self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
+        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_mute_button, self._mixer.set_mute_button, self._ctrl_map[SELTRACKMUTE])
 
     def _setup_device_and_transport_control(self):
         """
@@ -142,8 +156,7 @@ class VMX_VJ(ControlSurface):
 
         self._transport = SpecialTransportComponent()
         self._transport.name = 'Transport'
-        self._transport.play_button = self._note_map[PLAY]
-        self._transport.setup_play_button()
+        self.menu_manager.add_binds_to_menu("default", self.set_play_button, self.set_play_button, self._note_map[PLAY])
         self._transport.set_stop_button(self._note_map[STOP])
         self._transport.set_record_button(self._note_map[REC])
         self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
@@ -164,14 +177,11 @@ class VMX_VJ(ControlSurface):
         """
         Setup settings related to SpecialSessionComponent
         """
-        self.session = SpecialSessionComponent(TSB_X, TSB_Y, self._menu_map, self._mixer,
-                                               self._transport)  # Track selection box size (X,Y) (horizontal, vertical).
+        self.session = SpecialSessionComponent(TSB_X, TSB_Y)  # Track selection box size (X,Y) (horizontal, vertical).
         self.session.name = 'Session_Control'
-        self.session.session_down = self._note_map[SESSIONDOWN]
-        self.session.session_up = self._note_map[SESSIONUP]
-        self.session.session_left = self._note_map[SESSIONLEFT]
-        self.session.session_right = self._note_map[SESSIONRIGHT]
-        self.session.view_setup()
+        self._session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
+        self._session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
+        self._session.set_select_buttons(self._note_map[SCENEDN], self._note_map[SCENEUP])
         self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in
                                     range(TSB_X)]  # range(tsb_x) Range value is the track selection
         self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in
@@ -181,8 +191,8 @@ class VMX_VJ(ControlSurface):
         self.session.selected_scene().name = 'Selected_Scene'
         self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
-        self.session.delete_button = self._note_map[DELETE]
-        for scene_index in range(TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
+        for scene_index in range(
+                TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
             button_row = []
             for track_index in range(TSB_X):  # (X (vertical / the tracks))
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
@@ -240,7 +250,8 @@ class VMX_VJ(ControlSurface):
             self._ctrl_map.append(None)
 
         for note in MENUBUTTONS:
-            self._menu_map.append(self._note_map[note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
+            self._menu_map.append(self._note_map[
+                                      note])  # First button of last row will be used to open the menu (IN CASE IT'S X*X BUTTONS GRID)
 
         self._jog_wheel = ButtonElement(False, MIDI_CC_TYPE, 5, 101)
         self._jog_wheel.name = 'Jog_Wheel'

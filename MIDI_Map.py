@@ -60,6 +60,10 @@ ZOOMDOWN = -1  # Session Zoom down
 ZOOMLEFT = -1  # Session Zoom left
 ZOOMRIGHT = -1  # Session Zoom right
 
+# Scene Navigation
+SCENEUP = -1  # Scene down
+SCENEDN = -1  # Scene up
+
 # Scene Launch
 SELSCENELAUNCH = -1  # Selected scene launch
 SCENELAUNCH = tuple([-1] * 4)  # Scene launch buttons
@@ -118,11 +122,6 @@ PARAMCONTROL = tuple([-1] * 8)  # Device control
 
 # Custom Menu
 # ----------
-MENUBUTTONS = [
-    65, 66, 73, 74,
-    67, 68, 75, 76,
-    69, 70, 77, 78,
-    71, 72, 79, 80
-]
+MENUBUTTONS = []  # Unused
 
 TOGGLE_NOTES = []
