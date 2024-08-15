@@ -102,8 +102,16 @@ class VMX_VJ(ControlSurface):
         Setup menu master and menus
         """
         self.menu_manager.name = 'Menu_Manager'
-        default_menu = SpecialMenuComponent("default")
-        self.menu_manager.add_menu(default_menu)
+        self.menu_manager.add_menu(SpecialMenuComponent("default"))
+        self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_0", True))
+        self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_1", True))
+        self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_2", True))
+        self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_3", True))
+        self.menu_manager.add_opposite(["default_mixer_0", "default_mixer_1", "default_mixer_2", "default_mixer_3"])
+        self.menu_manager.set_button("default_mixer_0", self._note_map[81])
+        self.menu_manager.set_button("default_mixer_1", self._note_map[71])
+        self.menu_manager.set_button("default_mixer_2", self._note_map[61])
+        self.menu_manager.set_button("default_mixer_3", self._note_map[51])
 
     def _setup_mixer_control(self):
         """
@@ -130,11 +138,23 @@ class VMX_VJ(ControlSurface):
         for track in range(TSB_X):
             strip = self._mixer.channel_strip(track)
             strip.name = 'Channel_Strip_' + str(track)
-            # strip.set_arm_button(self._note_map[TRACKREC[track]])
-            # strip.set_solo_button(self._note_map[TRACKSOLO[track]])
-            # strip.set_mute_button(self._note_map[TRACKMUTE[track]])
             # strip.set_select_button(self._note_map[TRACKSEL[track]])
-            strip.set_volume_control(self._ctrl_map[TRACKVOL[track]])
+            self.menu_manager.add_binds_to_menu("default", strip.set_select_button, strip.set_select_button,
+                                                self._note_map[TRACKSEL[track]])
+            # strip.set_volume_control(self._ctrl_map[TRACKVOL[track]])
+            self.menu_manager.add_binds_to_menu("default", strip.set_volume_control, strip.set_volume_control,
+                                                self._ctrl_map[TRACKVOL[track]])
+            # strip.set_arm_button(self._note_map[TRACKREC[track]])
+            self.menu_manager.add_binds_to_menu("default_mixer_1", strip.set_arm_button, strip.set_arm_button,
+                                                self._note_map[TRACKREC[track]])
+            # strip.set_mute_button(self._note_map[TRACKMUTE[track]])
+            self.menu_manager.add_binds_to_menu("default_mixer_2", strip.set_mute_button, strip.set_mute_button,
+                                                self._note_map[TRACKMUTE[track]])
+            # strip.set_solo_button(self._note_map[TRACKSOLO[track]])
+            self.menu_manager.add_binds_to_menu("default_mixer_3", strip.set_solo_button, strip.set_solo_button,
+                                                self._note_map[TRACKSOLO[track]])
+            # # strip.set_mute_button(self._note_map[TRACKMUTE[track]])
+            # self.menu_manager.add_binds_to_menu("default_mixer_3", strip.set_, strip.set_, self._note_map[TRACKREC[track]])  # Have to do something for stopping the thing
             # strip.set_pan_control(self._ctrl_map[TRACKPAN[track]])
             # strip.set_send_controls((self._ctrl_map[TRACKSENDA[track]], self._ctrl_map[TRACKSENDB[track]], self._ctrl_map[TRACKSENDC[track]]))
             strip.set_invert_mute_feedback(True)
@@ -169,9 +189,11 @@ class VMX_VJ(ControlSurface):
         self._transport.name = 'Transport'
         self._transport.time_button = self._jog_wheel
         # self._transport.set_play_button(self._note_map[PLAY])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button, self._note_map[PLAY])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button,
+                                            self._note_map[PLAY])
         # self._transport.set_stop_button(self._note_map[STOP])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button, self._note_map[STOP])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button,
+                                            self._note_map[STOP])
         # self._transport.set_record_button(self._note_map[REC])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button, self._transport.set_record_button, self._note_map[REC])
         # self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
@@ -197,7 +219,8 @@ class VMX_VJ(ControlSurface):
         # self._transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_punch_buttons, self._transport.set_punch_buttons, self._note_map[PUNCHIN])
         # self._transport.set_jog_wheel_time()
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_time, self._transport.unbind_jog_wheel, None)
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_time,
+                                            self._transport.unbind_jog_wheel, None)
 
     def _setup_session_control(self):
         """
@@ -208,17 +231,17 @@ class VMX_VJ(ControlSurface):
         self.session.set_track_bank_buttons(self._note_map[SESSIONRIGHT], self._note_map[SESSIONLEFT])
         self.session.set_scene_bank_buttons(self._note_map[SESSIONDOWN], self._note_map[SESSIONUP])
         self.session.set_select_buttons(self._note_map[SCENEDN], self._note_map[SCENEUP])
-        self._track_stop_buttons = [self._note_map[TRACKSTOP[index]] for index in
-                                    range(TSB_X)]  # range(tsb_x) Range value is the track selection
         self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in
                                       range(TSB_Y)]  # range(tsb_y) is the horizontal count for the track selection box
         self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
-        self.session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
+        # self.session.set_stop_track_clip_buttons
+        self.menu_manager.add_binds_to_menu("default_mixer_0", self.session.set_stop_all_clips_button,
+                                            self.session.set_stop_all_clips_button,
+                                            tuple([self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]))
         self.session.selected_scene().name = 'Selected_Scene'
         self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
-        for scene_index in range(
-                TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
+        for scene_index in range(TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
             button_row = []
             for track_index in range(TSB_X):  # (X (vertical / the tracks))
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]
@@ -226,6 +249,7 @@ class VMX_VJ(ControlSurface):
             self.session.clip_launch_buttons.append(button_row)
             self._mixer.clip_launch_buttons.append(button_row)
         self.session.setup_clip_launch()
+        self.session.set_mixer(self._mixer)
         # self.session.deletion_manager()
         self._session_zoom = SpecialZoomingComponent(self.session)
         self._session_zoom.name = 'Session_Overview'

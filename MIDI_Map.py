@@ -81,11 +81,11 @@ SELTRACKREC = -1  # Arm Selected Track
 SELTRACKSOLO = -1  # Solo Selected Track
 SELTRACKMUTE = -1  # Mute Selected Track
 
-TRACKSTOP = tuple([-1] * 8)  # Track stop buttons
-TRACKSEL = tuple([-1] * 8)  # Track select buttons
-TRACKMUTE = tuple([-1] * 8)  # Track mute buttons
-TRACKSOLO = tuple([-1] * 8)  # Track solo buttons
-TRACKREC = tuple([-1] * 8)  # Track record arm buttons
+TRACKSEL = (76, 66, 56, 46, 36, 26, 16, 6)  # Track select buttons
+TRACKSTOP = (88, 78, 68, 58, 48, 38, 28, 18)  # Track stop buttons
+TRACKMUTE = (88, 78, 68, 58, 48, 38, 28, 18)  # Track mute buttons
+TRACKSOLO = (88, 78, 68, 58, 48, 38, 28, 18)  # Track solo buttons
+TRACKREC = (88, 78, 68, 58, 48, 38, 28, 18)  # Track record buttons
 
 # Pad Translations for Drum Rack
 PADCHANNEL = 0  # MIDI channel for Drum Rack notes
