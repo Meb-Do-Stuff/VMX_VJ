@@ -21,7 +21,10 @@ class SpecialMenuComponent:
             if arg is None:
                 bind()
             else:
-                bind(arg)
+                if type(arg) is list:
+                    bind(*arg)
+                else:
+                    bind(arg)
         self.is_enabled = True
 
     def deactivated(self):

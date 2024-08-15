@@ -125,18 +125,13 @@ class VMX_VJ(ControlSurface):
         # self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.master_strip().set_select_button, self._mixer.master_strip().set_select_button, self._note_map[MASTERSEL])
         self._mixer.selected_strip().name = 'Selected_Channel_Strip'
-        # self._mixer.set_crossfader_control(self._ctrl_map[CROSSFADER])
         self.menu_manager.add_binds_to_menu("default", self._mixer.set_crossfader_control, self._mixer.set_crossfader_control, self._ctrl_map[CROSSFADER])
-        # self._mixer.set_prehear_volume_control(self._ctrl_map[CUELEVEL])
         self.menu_manager.add_binds_to_menu("default", self._mixer.set_prehear_volume_control, self._mixer.set_prehear_volume_control, self._ctrl_map[CUELEVEL])
         # self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.set_volume_control, self._mixer.set_volume_control, self._ctrl_map[MASTERVOLUME])
-        # self._mixer.selected_strip().set_arm_button(self._note_map[SELTRACKREC])
-        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_arm_button, self._mixer.set_arm_button, self._ctrl_map[SELTRACKREC])
-        # self._mixer.selected_strip().set_solo_button(self._note_map[SELTRACKSOLO])
-        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_solo_button, self._mixer.set_solo_button, self._ctrl_map[SELTRACKSOLO])
-        # self._mixer.selected_strip().set_mute_button(self._note_map[SELTRACKMUTE])
-        # self.menu_manager.add_binds_to_menu("default", self._mixer.set_mute_button, self._mixer.set_mute_button, self._ctrl_map[SELTRACKMUTE])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_arm_button, self._mixer.selected_strip().set_arm_button, self._note_map[SELTRACKREC])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_solo_button, self._mixer.selected_strip().set_solo_button, self._note_map[SELTRACKSOLO])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_mute_button, self._mixer.selected_strip().set_mute_button, self._note_map[SELTRACKMUTE])
         for track in range(TSB_X):
             strip = self._mixer.channel_strip(track)
             strip.name = 'Channel_Strip_' + str(track)
@@ -186,22 +181,17 @@ class VMX_VJ(ControlSurface):
         self._transport.name = 'Transport'
         self._transport.time_wheel = self._jog_wheel0
         self._transport.tempo_wheel = self._jog_wheel1
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button,
-                                            self._note_map[PLAY])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button,
-                                            self._note_map[STOP])
-        # self._transport.set_record_button(self._note_map[REC])
-        # self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button, self._transport.set_record_button, self._note_map[REC])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button, self._note_map[PLAY])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button, self._note_map[STOP])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button, self._transport.set_record_button, self._note_map[REC])
         # self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_nudge_buttons, self._transport.set_nudge_buttons, self._note_map[NUDGEUP])
-        # self._transport.set_undo_button(self._note_map[UNDO])
-        # self.menu_manager.add_binds_to_menu("default", self._transport.set_undo_button, self._transport.set_undo_button, self._note_map[UNDO])
-        # self._transport.set_redo_button(self._note_map[REDO])
-        # self.menu_manager.add_binds_to_menu("default", self._transport.set_redo_button, self._transport.set_redo_button, self._note_map[REDO])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_undo_button, self._transport.set_undo_button, self._note_map[UNDO])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_redo_button, self._transport.set_redo_button, self._note_map[REDO])
         # self._transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_tap_tempo_button, self._transport.set_tap_tempo_button, self._note_map[TAPTEMPO])
         # self._transport.set_quant_toggle_button(self._note_map[RECQUANT])
-        # self.menu_manager.add_binds_to_menu("default", self._transport.set_quant_toggle_button, self._transport.set_quant_toggle_button, self._note_map[RECQUANT])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_quant_toggle_button, self._transport.set_quant_toggle_button, self._note_map[RECQUANT])
         # self._transport.set_overdub_button(self._note_map[OVERDUB])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_overdub_button, self._transport.set_overdub_button, self._note_map[OVERDUB])
         # self._transport.set_metronome_button(self._note_map[METRONOME])
@@ -213,8 +203,7 @@ class VMX_VJ(ControlSurface):
         # self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_seek_buttons, self._transport.set_seek_buttons, self._note_map[SEEKFWD])
         # self._transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
-        # self.menu_manager.add_binds_to_menu("default", self._transport.set_punch_buttons, self._transport.set_punch_buttons, self._note_map[PUNCHIN])
-        # self._transport.set_jog_wheel_time()
+        # self.menu_manager.add_binds_to_menu("default", self._transport.set_punch_buttons, self._transport.set_punch_buttons, (self._note_map[PUNCHIN], self._note_map[PUNCHOUT]))
         self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_time,
                                             self._transport.unbind_time_jog_wheel, None)
 

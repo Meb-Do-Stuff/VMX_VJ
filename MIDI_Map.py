@@ -21,19 +21,19 @@ TSB_Y = 4  # Controls the horizontal value for the track selection box. Default 
 # General
 PLAY = 11  # Global play
 STOP = 55  # Global stop
-REC = -1  # Global record
+REC = 14  # Global record
 DELETE = -1  # Delete selected clip
 TAPTEMPO = -1  # Tap tempo
-NUDGEUP = -1  # Tempo Nudge Up
-NUDGEDOWN = -1  # Tempo Nudge Down
-UNDO = -1  # Undo
-REDO = -1  # Redo
-LOOP = -1  # Loop on/off
-PUNCHIN = -1  # Punch in
-PUNCHOUT = -1  # Punch out
+# NUDGEUP = 64  # Tempo Nudge Up
+# NUDGEDOWN = 54  # Tempo Nudge Down
+UNDO = 44  # Undo
+REDO = 4  # Redo
+LOOP = 14  # Loop on/off
+# PUNCHIN = 64  # Punch in
+# PUNCHOUT = 24  # Punch out
 OVERDUB = -1  # Overdub on/off
 METRONOME = -1  # Metronome on/off
-RECQUANT = -1  # Record quantization on/off
+RECQUANT = 54  # Record quantization on/off
 DETAILVIEW = -1  # Detail view switch
 CLIPTRACKVIEW = -1  # Clip/Track view switch
 
@@ -77,9 +77,9 @@ CLIPNOTEMAP = tuple(tuple([[-1] * 8])*4)
 
 # Track Control
 MASTERSEL = -1  # Master track select
-SELTRACKREC = -1  # Arm Selected Track
-SELTRACKSOLO = -1  # Solo Selected Track
-SELTRACKMUTE = -1  # Mute Selected Track
+SELTRACKREC = 21  # Arm Selected Track
+SELTRACKSOLO = 25  # Solo Selected Track
+SELTRACKMUTE = 65  # Mute Selected Track
 
 TRACKSEL = (76, 66, 56, 46, 36, 26, 16, 6)  # Track select buttons
 TRACKSTOP = (88, 78, 68, 58, 48, 38, 28, 18)  # Track stop buttons
