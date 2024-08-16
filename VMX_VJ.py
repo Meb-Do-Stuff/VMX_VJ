@@ -1,5 +1,5 @@
 from __future__ import with_statement
-# import Live
+import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import *
 from _Framework.SliderElement import SliderElement
@@ -99,12 +99,19 @@ class VMX_VJ(ControlSurface):
             scene_offset = SCENE_OFFSET
         self.session.link_with_track_offset(track_offset, scene_offset)
 
+    def browser_test(self):
+        for i, child in enumerate(self.application().browser.audio_effects.iter_children):
+            Live.Base.log("Child: " + str(i) + " - " + child.name)
+            if child.name == "EQ Eight":
+                # self.application().browser.audio_effects.select_child(i)
+                return
+
     def _setup_menu_control(self):
         """
         Setup menu master and menus
         """
         self.menu_manager.name = 'Menu_Manager'
-        self.menu_manager.add_menu(SpecialMenuComponent("default"))
+        self.menu_manager.add_menu(SpecialMenuComponent("default", False, self.browser_test))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_0", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_1", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_2", True))
