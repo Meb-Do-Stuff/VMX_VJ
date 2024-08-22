@@ -51,22 +51,22 @@ class MenuManager(ControlSurfaceComponent):
         self._note_map = note_map
         self._ctrl_map = ctrl_map
         self._menus = {}
-        self._current_menu = {}
+        self.current_menus = {}
         self._buttons = {}
 
     def add_menu(self, menu: SpecialMenuComponent):
         self._menus[menu.name] = menu
 
     def activate_menu(self, menu_name: str):
-        if len(self._current_menu) != 0 and not self._menus[menu_name].is_additive:
+        if len(self.current_menus) != 0 and not self._menus[menu_name].is_additive:
             for menu in self._menus:
                 self._menus[menu].deactivated()
-        self._current_menu[menu_name] = self._menus[menu_name]
-        self._current_menu[menu_name].activated()
-        if self._current_menu[menu_name].is_additive:
+        self.current_menus[menu_name] = self._menus[menu_name]
+        self.current_menus[menu_name].activated()
+        if self.current_menus[menu_name].is_additive:
             for menu in self._menus:
-                if self._menus[menu].is_additive and menu is not menu_name and menu in self._menus[menu].opposite_menu and menu in self._current_menu:
-                    self._current_menu[menu].deactivated()
+                if self._menus[menu].is_additive and menu is not menu_name and menu in self._menus[menu].opposite_menu and menu in self.current_menus:
+                    self.current_menus[menu].deactivated()
 
     def add_binds_to_menu(self, name: str, bind_function, unbind_function, arg=None):
         self._menus[name].add_bind(bind_function, unbind_function, arg)

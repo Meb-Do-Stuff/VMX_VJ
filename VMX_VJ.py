@@ -16,6 +16,7 @@ from .SpecialZoomingComponent import SpecialZoomingComponent
 from .SpecialViewControllerComponent import DetailViewControllerComponent
 from .MenuManager import MenuManager, SpecialMenuComponent
 from .MIDI_Map import *
+from .Eq8Manager import Eq8Manager
 
 
 # MIDI_NOTE_TYPE = 0
@@ -54,6 +55,7 @@ class VMX_VJ(ControlSurface):
             self.session = None
             self._load_MIDI_map()
             self.menu_manager = MenuManager(self._note_map, self._ctrl_map)
+            self.eq8_manager = Eq8Manager()
             self._setup_menu_control()
             self._setup_mixer_control()
             self._setup_device_and_transport_control()
@@ -99,33 +101,6 @@ class VMX_VJ(ControlSurface):
             scene_offset = SCENE_OFFSET
         self.session.link_with_track_offset(track_offset, scene_offset)
 
-    def eq_loader(self):
-        for i, child in enumerate(self.application().browser.audio_effects.iter_children):
-            if child.name == "EQ Eight":
-                self.application().browser.load_item(child)
-                break
-        for device in list(self.song().view.selected_track.devices):
-            if device.name == "EQ Eight":
-                device.name = "VMX Equalizer"
-                for parameter in device.parameters:
-                    Live.Base.log(parameter.name + "  " + str(parameter.value))
-                    if "Filter On" in parameter.name:
-                        parameter.value = 1.0
-                    if "Filter Type" in parameter.name:
-                        if 0 < int(parameter.name[0]) < 8:
-                            parameter.value = 3
-                        elif int(parameter.name[0]) == 8:
-                            parameter.value = 5
-                    if "Frequency A" in parameter.name:
-                        parameter.value = (int(parameter.name[0]) - 1) / 7
-
-    def eq_unloader(self):
-        for device in list(self.song().view.selected_track.devices):
-            Live.Base.log(f"Device: {device.name}, {[parameter.value == 1.0 for parameter in device.parameters if 'Filter On A' in parameter.name]} = {[parameter.value == 1.0 for parameter in device.parameters if 'Filter On A' in parameter.name] == [True] * 8}  {[round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if 'Frequency A' in parameter.name]} = {[round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if 'Frequency A' in parameter.name] == [True] * 8}")
-            if device.name == "VMX Equalizer" and [parameter.value == 1.0 for parameter in device.parameters if "Filter On A" in parameter.name] == [True] * 8 and [round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if "Frequency A" in parameter.name] == [True] * 8:
-                self.song().view.selected_track.delete_device(device)
-                break
-
     def _setup_menu_control(self):
         """
         Setup menu master and menus
@@ -136,7 +111,7 @@ class VMX_VJ(ControlSurface):
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_1", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_2", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_3", True))
-        self.menu_manager.add_menu(SpecialMenuComponent("equalizer", False, self.eq_loader, self.eq_unloader))
+        self.menu_manager.add_menu(SpecialMenuComponent("equalizer", False, self.eq8_manager.eq_loader, self.eq8_manager.eq_unloader))
         self.menu_manager.add_opposite(["default_mixer_0", "default_mixer_1", "default_mixer_2", "default_mixer_3"])
         self.menu_manager.set_button("default", self._note_map[83])
         self.menu_manager.set_button("equalizer", self._note_map[73])
@@ -223,29 +198,20 @@ class VMX_VJ(ControlSurface):
                                             self._note_map[STOP])
         self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button,
                                             self._transport.set_record_button, self._note_map[REC])
-        # self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_nudge_buttons, self._transport.set_nudge_buttons, self._note_map[NUDGEUP])
         self.menu_manager.add_binds_to_menu("default", self._transport.set_undo_button, self._transport.set_undo_button,
                                             self._note_map[UNDO])
         self.menu_manager.add_binds_to_menu("default", self._transport.set_redo_button, self._transport.set_redo_button,
                                             self._note_map[REDO])
-        # self._transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_tap_tempo_button, self._transport.set_tap_tempo_button, self._note_map[TAPTEMPO])
-        # self._transport.set_quant_toggle_button(self._note_map[RECQUANT])
         self.menu_manager.add_binds_to_menu("default", self._transport.set_quant_toggle_button,
                                             self._transport.set_quant_toggle_button, self._note_map[RECQUANT])
-        # self._transport.set_overdub_button(self._note_map[OVERDUB])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_overdub_button, self._transport.set_overdub_button, self._note_map[OVERDUB])
-        # self._transport.set_metronome_button(self._note_map[METRONOME])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_metronome_button, self._transport.set_metronome_button, self._note_map[METRONOME])
-        # self._transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
         self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_tempo,
                                             self._transport.unbind_tempo_jog_wheel)
-        # self._transport.set_loop_button(self._note_map[LOOP])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_loop_button, self._transport.set_loop_button, self._note_map[LOOP])
-        # self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_seek_buttons, self._transport.set_seek_buttons, self._note_map[SEEKFWD])
-        # self._transport.set_punch_buttons(self._note_map[PUNCHIN], self._note_map[PUNCHOUT])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_punch_buttons, self._transport.set_punch_buttons, (self._note_map[PUNCHIN], self._note_map[PUNCHOUT]))
         self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_time,
                                             self._transport.unbind_time_jog_wheel, None)
