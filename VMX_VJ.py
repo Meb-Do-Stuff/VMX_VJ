@@ -17,6 +17,7 @@ from .SpecialViewControllerComponent import DetailViewControllerComponent
 from .MenuManager import MenuManager, SpecialMenuComponent
 from .MIDI_Map import *
 
+
 # MIDI_NOTE_TYPE = 0
 # MIDI_CC_TYPE = 1
 # MIDI_PB_TYPE = 2
@@ -118,6 +119,13 @@ class VMX_VJ(ControlSurface):
                     if "Frequency A" in parameter.name:
                         parameter.value = (int(parameter.name[0]) - 1) / 7
 
+    def eq_unloader(self):
+        for device in list(self.song().view.selected_track.devices):
+            Live.Base.log(f"Device: {device.name}, {[parameter.value == 1.0 for parameter in device.parameters if 'Filter On A' in parameter.name]} = {[parameter.value == 1.0 for parameter in device.parameters if 'Filter On A' in parameter.name] == [True] * 8}  {[round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if 'Frequency A' in parameter.name]} = {[round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if 'Frequency A' in parameter.name] == [True] * 8}")
+            if device.name == "VMX Equalizer" and [parameter.value == 1.0 for parameter in device.parameters if "Filter On A" in parameter.name] == [True] * 8 and [round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if "Frequency A" in parameter.name] == [True] * 8:
+                self.song().view.selected_track.delete_device(device)
+                break
+
     def _setup_menu_control(self):
         """
         Setup menu master and menus
@@ -128,7 +136,7 @@ class VMX_VJ(ControlSurface):
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_1", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_2", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_3", True))
-        self.menu_manager.add_menu(SpecialMenuComponent("equalizer", False, self.eq_loader))
+        self.menu_manager.add_menu(SpecialMenuComponent("equalizer", False, self.eq_loader, self.eq_unloader))
         self.menu_manager.add_opposite(["default_mixer_0", "default_mixer_1", "default_mixer_2", "default_mixer_3"])
         self.menu_manager.set_button("default", self._note_map[83])
         self.menu_manager.set_button("equalizer", self._note_map[73])
