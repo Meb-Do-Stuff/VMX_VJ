@@ -17,7 +17,6 @@ from .SpecialViewControllerComponent import DetailViewControllerComponent
 from .MenuManager import MenuManager, SpecialMenuComponent
 from .MIDI_Map import *
 
-
 # MIDI_NOTE_TYPE = 0
 # MIDI_CC_TYPE = 1
 # MIDI_PB_TYPE = 2
@@ -99,24 +98,40 @@ class VMX_VJ(ControlSurface):
             scene_offset = SCENE_OFFSET
         self.session.link_with_track_offset(track_offset, scene_offset)
 
-    def browser_test(self):
+    def eq_loader(self):
         for i, child in enumerate(self.application().browser.audio_effects.iter_children):
-            Live.Base.log("Child: " + str(i) + " - " + child.name)
             if child.name == "EQ Eight":
-                # self.application().browser.audio_effects.select_child(i)
-                return
+                self.application().browser.load_item(child)
+                break
+        for device in list(self.song().view.selected_track.devices):
+            if device.name == "EQ Eight":
+                device.name = "VMX Equalizer"
+                for parameter in device.parameters:
+                    Live.Base.log(parameter.name + "  " + str(parameter.value))
+                    if "Filter On" in parameter.name:
+                        parameter.value = 1.0
+                    if "Filter Type" in parameter.name:
+                        if 0 < int(parameter.name[0]) < 8:
+                            parameter.value = 3
+                        elif int(parameter.name[0]) == 8:
+                            parameter.value = 5
+                    if "Frequency A" in parameter.name:
+                        parameter.value = (int(parameter.name[0]) - 1) / 7
 
     def _setup_menu_control(self):
         """
         Setup menu master and menus
         """
         self.menu_manager.name = 'Menu_Manager'
-        self.menu_manager.add_menu(SpecialMenuComponent("default", False, self.browser_test))
+        self.menu_manager.add_menu(SpecialMenuComponent("default", False))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_0", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_1", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_2", True))
         self.menu_manager.add_menu(SpecialMenuComponent("default_mixer_3", True))
+        self.menu_manager.add_menu(SpecialMenuComponent("equalizer", False, self.eq_loader))
         self.menu_manager.add_opposite(["default_mixer_0", "default_mixer_1", "default_mixer_2", "default_mixer_3"])
+        self.menu_manager.set_button("default", self._note_map[83])
+        self.menu_manager.set_button("equalizer", self._note_map[73])
         self.menu_manager.set_button("default_mixer_0", self._note_map[81])
         self.menu_manager.set_button("default_mixer_1", self._note_map[71])
         self.menu_manager.set_button("default_mixer_2", self._note_map[61])
@@ -126,19 +141,25 @@ class VMX_VJ(ControlSurface):
         """
         Setup settings related to SpecialMixerComponent
         """
-        self._mixer = SpecialMixerComponent(TSB_Y, TSB_X)  # Initialize the component (extended from _Framework.MixerComponent)
+        self._mixer = SpecialMixerComponent(TSB_Y,
+                                            TSB_X)  # Initialize the component (extended from _Framework.MixerComponent)
         self._mixer.name = 'Mixer'
         self._mixer.master_strip().name = 'Master_Channel_Strip'
         # self._mixer.master_strip().set_select_button(self._note_map[MASTERSEL])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.master_strip().set_select_button, self._mixer.master_strip().set_select_button, self._note_map[MASTERSEL])
         self._mixer.selected_strip().name = 'Selected_Channel_Strip'
-        self.menu_manager.add_binds_to_menu("default", self._mixer.set_crossfader_control, self._mixer.set_crossfader_control, self._ctrl_map[CROSSFADER])
-        self.menu_manager.add_binds_to_menu("default", self._mixer.set_prehear_volume_control, self._mixer.set_prehear_volume_control, self._ctrl_map[CUELEVEL])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.set_crossfader_control,
+                                            self._mixer.set_crossfader_control, self._ctrl_map[CROSSFADER])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.set_prehear_volume_control,
+                                            self._mixer.set_prehear_volume_control, self._ctrl_map[CUELEVEL])
         # self._mixer.master_strip().set_volume_control(self._ctrl_map[MASTERVOLUME])
         # self.menu_manager.add_binds_to_menu("default", self._mixer.set_volume_control, self._mixer.set_volume_control, self._ctrl_map[MASTERVOLUME])
-        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_arm_button, self._mixer.selected_strip().set_arm_button, self._note_map[SELTRACKREC])
-        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_solo_button, self._mixer.selected_strip().set_solo_button, self._note_map[SELTRACKSOLO])
-        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_mute_button, self._mixer.selected_strip().set_mute_button, self._note_map[SELTRACKMUTE])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_arm_button,
+                                            self._mixer.selected_strip().set_arm_button, self._note_map[SELTRACKREC])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_solo_button,
+                                            self._mixer.selected_strip().set_solo_button, self._note_map[SELTRACKSOLO])
+        self.menu_manager.add_binds_to_menu("default", self._mixer.selected_strip().set_mute_button,
+                                            self._mixer.selected_strip().set_mute_button, self._note_map[SELTRACKMUTE])
         for track in range(TSB_X):
             strip = self._mixer.channel_strip(track)
             strip.name = 'Channel_Strip_' + str(track)
@@ -188,23 +209,30 @@ class VMX_VJ(ControlSurface):
         self._transport.name = 'Transport'
         self._transport.time_wheel = self._jog_wheel0
         self._transport.tempo_wheel = self._jog_wheel1
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button, self._note_map[PLAY])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button, self._note_map[STOP])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button, self._transport.set_record_button, self._note_map[REC])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_play_button, self._transport.set_play_button,
+                                            self._note_map[PLAY])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_stop_button, self._transport.set_stop_button,
+                                            self._note_map[STOP])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_record_button,
+                                            self._transport.set_record_button, self._note_map[REC])
         # self._transport.set_nudge_buttons(self._note_map[NUDGEUP], self._note_map[NUDGEDOWN])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_nudge_buttons, self._transport.set_nudge_buttons, self._note_map[NUDGEUP])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_undo_button, self._transport.set_undo_button, self._note_map[UNDO])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_redo_button, self._transport.set_redo_button, self._note_map[REDO])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_undo_button, self._transport.set_undo_button,
+                                            self._note_map[UNDO])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_redo_button, self._transport.set_redo_button,
+                                            self._note_map[REDO])
         # self._transport.set_tap_tempo_button(self._note_map[TAPTEMPO])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_tap_tempo_button, self._transport.set_tap_tempo_button, self._note_map[TAPTEMPO])
         # self._transport.set_quant_toggle_button(self._note_map[RECQUANT])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_quant_toggle_button, self._transport.set_quant_toggle_button, self._note_map[RECQUANT])
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_quant_toggle_button,
+                                            self._transport.set_quant_toggle_button, self._note_map[RECQUANT])
         # self._transport.set_overdub_button(self._note_map[OVERDUB])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_overdub_button, self._transport.set_overdub_button, self._note_map[OVERDUB])
         # self._transport.set_metronome_button(self._note_map[METRONOME])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_metronome_button, self._transport.set_metronome_button, self._note_map[METRONOME])
         # self._transport.set_tempo_control(self._ctrl_map[TEMPOCONTROL])
-        self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_tempo, self._transport.unbind_tempo_jog_wheel)
+        self.menu_manager.add_binds_to_menu("default", self._transport.set_jog_wheel_tempo,
+                                            self._transport.unbind_tempo_jog_wheel)
         # self._transport.set_loop_button(self._note_map[LOOP])
         # self.menu_manager.add_binds_to_menu("default", self._transport.set_loop_button, self._transport.set_loop_button, self._note_map[LOOP])
         # self._transport.set_seek_buttons(self._note_map[SEEKFWD], self._note_map[SEEKRWD])
@@ -226,11 +254,14 @@ class VMX_VJ(ControlSurface):
         self._scene_launch_buttons = [self._note_map[SCENELAUNCH[index]] for index in
                                       range(TSB_Y)]  # range(tsb_y) is the horizontal count for the track selection box
         self.session.set_stop_all_clips_button(self._note_map[STOPALLCLIPS])
-        self.menu_manager.add_binds_to_menu("default_mixer_0", self.session.set_stop_track_clip_buttons, self.session.set_stop_track_clip_buttons, tuple([self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]))
+        self.menu_manager.add_binds_to_menu("default_mixer_0", self.session.set_stop_track_clip_buttons,
+                                            self.session.set_stop_track_clip_buttons,
+                                            tuple([self._note_map[TRACKSTOP[index]] for index in range(TSB_X)]))
         self.session.selected_scene().name = 'Selected_Scene'
         self.session.selected_scene().set_launch_button(self._note_map[SELSCENELAUNCH])
         self.session.slot_launch_button = self._note_map[SELCLIPLAUNCH]
-        for scene_index in range(TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
+        for scene_index in range(
+                TSB_Y):  # Setting up buttons for the 16x4 button matrix (starting with Y (horizontal / the scenes))
             button_row = []
             for track_index in range(TSB_X):  # (X (vertical / the tracks))
                 button = self._note_map[CLIPNOTEMAP[scene_index][track_index]]

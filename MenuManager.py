@@ -8,13 +8,14 @@ from _Framework.ButtonElement import ButtonElement
 
 class SpecialMenuComponent:
 
-    def __init__(self, name: str, is_additive: bool = False, launch_function=None):
+    def __init__(self, name: str, is_additive: bool = False, launch_function=None, cancel_function=None):
         self._unbind_functions = []
         self._bind_functions = []
         self.name = name
         self.is_additive = is_additive
         self.opposite_menu = []  # Menus that have to be disabled in additive mode when this one is enabled
         self._launch_function = launch_function
+        self._cancel_function = cancel_function
 
     def activated(self):
         for bind, arg in self._bind_functions:
@@ -34,6 +35,8 @@ class SpecialMenuComponent:
                 unbind()
             else:
                 unbind(None)
+        if self._cancel_function is not None:
+            self._cancel_function()
 
     def add_bind(self, bind_function, unbind_function, note: None):
         self._bind_functions.append((bind_function, note))
