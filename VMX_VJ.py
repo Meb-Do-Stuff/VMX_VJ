@@ -252,7 +252,7 @@ class VMX_VJ(ControlSurface):
         # self._mixer.setup_track_deletion()
 
     def _on_selected_track_changed(self):
-        ControlSurface._on_selected_track_changed(self)
+        Live.Base.log("Selected track changed")
         track = self.song().view.selected_track
         device_to_select = track.view.selected_device
         if device_to_select is None and len(track.devices) > 0:

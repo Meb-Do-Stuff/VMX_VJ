@@ -6,7 +6,7 @@ class Eq8Manager(ControlSurfaceComponent):
     def __init__(self):
         ControlSurfaceComponent.__init__(self)
         self._last_selected_track = self.song().view.selected_track
-        self.song().view.add_selected_track_listener(self.track_changed)
+        self.song().view.add_selected_track_listener(self.on_selected_track_changed)
 
     def eq_loader(self):
         for device in list(self.song().view.selected_track.devices):
@@ -33,16 +33,19 @@ class Eq8Manager(ControlSurfaceComponent):
                     parameter.value = (int(parameter.name[0]) - 1) / 7
 
     def eq_unloader(self, track=None):
+        Live.Base.log("eq_unloader is track none: " + str(track is None))
         if track is None:
             track = self.song().view.selected_track
         for i, device in enumerate(list(track.devices)):
             if device.name == "VMX Equalizer" and [parameter.value == 1.0 for parameter in device.parameters if "Filter On A" in parameter.name] == [True] * 8 and [round(parameter.value, 1) == round((int(parameter.name[0]) - 1) / 7, 1) for parameter in device.parameters if "Frequency A" in parameter.name] == [True] * 8:
-                device_parent = device.canonical_parent
-                device_index = list(device_parent.devices).index(device)
-                device_parent.delete_device(device_index)
+                track.delete_device(i)
 
-    def track_changed(self):
-        if self.song().view.selected_track != self._last_selected_track and "equalizer":  # in self.menu_manager.current_menus:
-            self.eq_unloader(self._last_selected_track)
+    def on_selected_track_changed(self):
+        Live.Base.log(self._last_selected_track.name)
+        Live.Base.log(str(self._last_selected_track in self.song().tracks))
+        if self.song().view.selected_track != self._last_selected_track:  # and "equalizer" in self.menu_manager.current_menus:
+            for track in self.song().tracks:
+                if track == self._last_selected_track:
+                    self.eq_unloader(track)
             self._last_selected_track = self.song().view.selected_track
             self.eq_loader()
