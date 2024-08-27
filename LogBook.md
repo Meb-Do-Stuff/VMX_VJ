@@ -39,6 +39,16 @@ MENUBUTTONS = [
 ```
 ChatGPT has been used to correct typo errors and information about Ableton (such as what are banks, and can I have more crossfaders than one (the answer is no, but I thought of a way)).
 
+## Goals & achievements
+
+As said above, I worked a lot on my VMX V64 control surface before moving on on this project.<br>
+I want to have move functions. While the V64 have 2 menus (the ALT mode and Scene mode), I want this one to be full of menus and sub-menus, to do everything.
+So that's what I spent the most time on for this one.<br>
+For now, only the default menu is working (that let you manage volume and tons of stuff for 8 tracks).<br>
+Next menu I'm working on is for an EQ8 (Equalizer) controllable with the faders.<br>
+Though, I'm having a problem at the moment with working on that, so I have to figure out a way to do that.<br>
+Still in WIP, if you want to see how it would look like as a final result, look at my VMX V64 support.
+
 ---
 
 Moral support:<br>
